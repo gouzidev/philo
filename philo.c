@@ -1,41 +1,54 @@
-#include <stdio.h>
 #include <pthread.h>
-#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
+#include <unistd.h>
 
-typedef struct s_philo {
-    int i;
-    pthread_t *t;
-    pthread_mutex_t mutex;
-}   t_philo;
-
-void *print_n(void *p)
+int	ft_atoi(const char *str)
 {
-    t_philo *ph;
+	int	i;
+	int	sign;
+	int	res;
 
-    ph = (t_philo *)p;
-
-    pthread_mutex_lock(&ph->mutex);
-    printf("-> %d\n", (ph->i)++);
-    pthread_mutex_unlock(&ph->mutex);
-
+	res = 0;
+	sign = 1;
+	i = 0;
+	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
+		i++;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			sign = -1;
+		i++;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		res = res * 10 + (str[i] - 48);
+		i++;
+	}
+	return (res * sign);
 }
 
-int main()
+
+int main(int    ac, char    *av[],  char    *env[])
 {
-    t_philo p;
-    p.t = malloc(sizeof(pthread_t) * 10);
-    pthread_mutex_init(&p.mutex, NULL);
-    int i = 0;
-    while (i < 10)
-    {
-        pthread_create(&p.t[i], NULL, print_n, &p);
-        i++;
-    }
-    i = 0;
-    while (i < 10)
-    {
-        pthread_join(p.t[i], NULL);
-        i++;
-    }
-    pthread_mutex_destroy(&p.mutex);
+    pthread_mutex_t forks;
+    if (ac < 5 || ac > 6)
+        (write(2, "wrong number of args\n", 22), exit(1));
+    int n_philos;
+    int time_die;
+    int time_eat;
+    int time_sleep;
+    int n_times_philo_eat;
+    int n_forks;
+
+    n_philos = ft_atoi(av[1]);    
+    time_die = ft_atoi(av[2]);    
+    time_eat = ft_atoi(av[3]);    
+    time_sleep = ft_atoi(av[4]);
+    if (ac == 6)
+        n_times_philo_eat = ft_atoi(av[5]);
+    else
+        n_times_philo_eat = -1;
+    
+    return 0;
 }

@@ -1,3 +1,5 @@
+NAME = philo
+
 SRC = philo.c
 
 OBJ = $(SRC:.c=.o)
