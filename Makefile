@@ -4,7 +4,8 @@ SRC = philo.c
 
 OBJ = $(SRC:.c=.o)
 
-all: $(NAME)
+all: $(NAME) clean
+	clear
 
 $(NAME): $(OBJ)
 	cc $(CFLAGS) $^ -o $@
