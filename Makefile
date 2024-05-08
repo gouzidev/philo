@@ -5,7 +5,7 @@ SRC = philo.c
 OBJ = $(SRC:.c=.o)
 
 all: $(NAME) clean
-	clear
+
 
 $(NAME): $(OBJ)
 	cc $(CFLAGS) $^ -o $@
