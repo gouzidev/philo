@@ -1,54 +1,47 @@
-#include <pthread.h>
-#include <stdio.h>
-#include <time.h>
-#include <unistd.h>
+#include "philo.h"
 
-int	ft_atoi(const char *str)
+void    *routine(void   *arg)
 {
-	int	i;
-	int	sign;
-	int	res;
+	t_philo *philo;
+    philo = (t_philo *)arg;
+	pthread_mutex_lock(philo->forks_mutex);
 
-	res = 0;
-	sign = 1;
-	i = 0;
-	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			sign = -1;
-		i++;
-	}
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		res = res * 10 + (str[i] - 48);
-		i++;
-	}
-	return (res * sign);
+    printf("philosopher -> %d\n", philo->number);
+
+	pthread_mutex_unlock(philo->forks_mutex);
 }
 
+t_data   *init_data(int   n_threads)
+{
+    t_data *data;
+    int i;
+
+	data = malloc(sizeof(t_data));
+	pthread_mutex_t	*forks_mutex;
+    data->philos = malloc(sizeof(t_philo) * n_threads);
+	forks_mutex = malloc(sizeof(pthread_mutex_t));
+	pthread_mutex_init(forks_mutex, NULL);
+	while (i < n_threads)
+    {
+        data->philos[i].number = i;
+		data->philos[i].forks_mutex = forks_mutex;
+		pthread_create(&data->philos[i].thread, NULL, routine, &data->philos[i]);
+        i++;
+    }
+
+    i = 0;
+    while (i < n_threads)
+    {
+        pthread_join(data->philos[i].thread, NULL);
+        i++;
+    }
+	pthread_mutex_destroy(forks_mutex);
+    return data;   
+}
 
 int main(int    ac, char    *av[],  char    *env[])
 {
-    pthread_mutex_t forks;
-    if (ac < 5 || ac > 6)
-        (write(2, "wrong number of args\n", 22), exit(1));
-    int n_philos;
-    int time_die;
-    int time_eat;
-    int time_sleep;
-    int n_times_philo_eat;
-    int n_forks;
-
-    n_philos = ft_atoi(av[1]);    
-    time_die = ft_atoi(av[2]);    
-    time_eat = ft_atoi(av[3]);    
-    time_sleep = ft_atoi(av[4]);
-    if (ac == 6)
-        n_times_philo_eat = ft_atoi(av[5]);
-    else
-        n_times_philo_eat = -1;
-    
+    t_data *data;
+    data = init_data(4);
     return 0;
 }
