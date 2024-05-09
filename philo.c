@@ -69,12 +69,9 @@ void *routine(void *arg)
 }
 
 
-int main()
+int main(int ac, char *av[])
 {
-    int nthreads = 4;
-    t_data *data = init_data(nthreads);
-
-
+    t_data *data = init_data(ac, av);
     init_fork_mutexes(data);
     create_threads(data, &routine);
     join_threads(data);

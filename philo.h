@@ -51,13 +51,12 @@ typedef struct s_philo
 
 
 int	ft_atoi(const char *str);
-void parse(int ac, char *av[], t_data *data);
 int is_odd(int n);
 void safe_print(char *msg,t_data *data, int philo_id);
 void init_fork_mutexes(t_data *data);
 void create_threads(t_data *data, void *(*routine)(void *));
 void join_threads(t_data *data);
-t_data *init_data (int nthreads);
+t_data *init_data (int ac, char *av[]);
 void dest_fork_mutexes(t_data *data);
 void ph_eat(t_data *data, int philo_id);
 void ph_sleep(t_data *data, int philo_id);
