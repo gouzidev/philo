@@ -20,6 +20,12 @@ typedef struct s_data
     t_fork *forks;
     long time;
     int nthreads;
+    int done;
+    long time_to_die;
+    long time_to_eat;
+    long time_to_sleep;
+    long n_eat_times;
+    pthread_mutex_t printf_mutex;
 }   t_data;
 
 typedef struct s_fork
@@ -43,9 +49,18 @@ typedef struct s_philo
     t_data      *data;
 } t_philo;
 
-int is_odd(int n);
 
+int	ft_atoi(const char *str);
+void parse(int ac, char *av[], t_data *data);
+int is_odd(int n);
+void safe_print(char *msg,t_data *data, int philo_id);
 void init_fork_mutexes(t_data *data);
+void create_threads(t_data *data, void *(*routine)(void *));
+void join_threads(t_data *data);
 t_data *init_data (int nthreads);
 void dest_fork_mutexes(t_data *data);
+void ph_eat(t_data *data, int philo_id);
+void ph_sleep(t_data *data, int philo_id);
+void LOCK(pthread_mutex_t *thread);
+void UNLOCK(pthread_mutex_t *thread);
 #endif

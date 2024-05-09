@@ -6,7 +6,7 @@ OBJ = $(SRC:.c=.o)
 
 CFLAGS = -Wall -Werror -Wextra
 
-THREADFLAG = -fsanitize=thread
+# THREADFLAG = -fsanitize=thread
 
 all: $(NAME)
 
@@ -17,10 +17,11 @@ $(NAME): $(OBJ)
 %o: %c
 	cc $(CFLAGS) $(THREADFLAG) $< -o $@
 
-re: fclean all
+re: fclean all clean
+	clear
 
 clean:
 	rm -fr $(OBJ)
 
-fclean: clean all
-	clear
+fclean: clean
+	rm -rf $(NAME)
