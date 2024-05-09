@@ -1,17 +1,21 @@
 NAME = philo
 
-SRC = philo.c
+SRC = philo.c init.c
 
 OBJ = $(SRC:.c=.o)
 
-all: $(NAME) clean
+CFLAGS = -Wall -Werror -Wextra
+
+THREADFLAG = -fsanitize=thread
+
+all: $(NAME)
 
 
 $(NAME): $(OBJ)
-	cc $(CFLAGS) $^ -o $@
+	cc $(CFLAGS) $(THREADFLAG) $^ -o $@
 
-.o.c:
-	cc $(CFLAGS) $< -o $@
+%o: %c
+	cc $(CFLAGS) $(THREADFLAG) $< -o $@
 
 re: fclean all
 
