@@ -19,6 +19,8 @@ typedef struct s_data
     t_philo *philos;
     t_fork *forks;
     long time;
+    long start_time;
+    struct timeval *curr_time;
     int nthreads;
     int done;
     long time_to_die;

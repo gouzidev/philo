@@ -88,6 +88,7 @@ void UNLOCK(pthread_mutex_t *thread)
 t_data *init_data (int ac, char *av[])
 {
     t_data *data;
+    struct timeval *tv;
     int i;
 
     if (ac < 5)
@@ -107,6 +108,10 @@ t_data *init_data (int ac, char *av[])
         data->n_eat_times = ft_atoi(av[4]);
     else
         data->n_eat_times = -1;
+    tv = malloc(sizeof(struct timeval));
+    gettimeofday(tv, NULL);
+    data->start_time = tv->tv_usec;
+    data->curr_time = tv;
     data->philos = malloc(sizeof(t_philo) * data->nthreads);
     data->forks = malloc(sizeof(t_fork) * data->nthreads);
     data->time = 0;
