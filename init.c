@@ -31,22 +31,25 @@ int	ft_atoi(const char *str)
 void safe_print(char *msg, t_data *data, int philo_id)
 {
     pthread_mutex_lock(&data->printf_mutex);
-    printf(msg, data->time, philo_id);
+    printf(msg, philo_id);
     pthread_mutex_unlock(&data->printf_mutex);
 }
 
 void ph_eat(t_data *data, int philo_id)
 {
-    safe_print("%ld %d is eating\n", data, philo_id);
+    safe_print("%d is eating\n", data, philo_id);
     usleep(data->time_to_eat * 1000);
-    data->time +=data->time_to_eat;
+
 }
 
 void ph_sleep(t_data *data, int philo_id)
 {
-    safe_print("%ld %d is sleeping\n", data, philo_id);
+    struct timeval tv;
+    safe_print("%d is sleeping\n", data, philo_id);
     usleep(data->time_to_sleep * 1000);
-    data->time +=data->time_to_sleep;
+    gettimeofday(&tv, NULL);
+    data->philos[philo_id].time_last_meal = get_curr_time();
+    printf("[ %d ] time after sleeping is -> %ld\n",philo_id, tv.tv_usec);
 }
 
 int is_odd(int n)
@@ -85,6 +88,22 @@ void UNLOCK(pthread_mutex_t *thread)
 {
     pthread_mutex_unlock(thread);
 }
+long get_curr_time()
+{
+    struct timeval now;
+    long time_mille;
+    gettimeofday(&now, NULL);
+    time_mille = (now.tv_sec * 1000) + (now.tv_usec / 1000);
+    return time_mille;
+}
+
+void check_death(t_philo *philo)
+{
+    long curr_time = get_curr_time();
+    if (curr_time - philo->time_last_meal > philo->data->time_to_die)
+        (printf("dead\n"), exit(1));
+}
+
 t_data *init_data (int ac, char *av[])
 {
     t_data *data;
@@ -92,10 +111,7 @@ t_data *init_data (int ac, char *av[])
     int i;
 
     if (ac < 5)
-    {
-        printf("bad number of args\n");
-        exit(1);
-    }
+        (printf("bad number of args\n"), exit(1));
     data = malloc(sizeof(t_data));
     if (ac >= 5 && ac <= 6)
     {
@@ -110,11 +126,8 @@ t_data *init_data (int ac, char *av[])
         data->n_eat_times = -1;
     tv = malloc(sizeof(struct timeval));
     gettimeofday(tv, NULL);
-    data->start_time = tv->tv_usec;
-    data->curr_time = tv;
     data->philos = malloc(sizeof(t_philo) * data->nthreads);
     data->forks = malloc(sizeof(t_fork) * data->nthreads);
-    data->time = 0;
     i = -1;
     while (++i < data->nthreads)
     {
@@ -123,6 +136,7 @@ t_data *init_data (int ac, char *av[])
         data->philos[i].is_dead = 0;
         data->philos[i].left_hand = NULL;
         data->philos[i].right_hand = NULL;
+        data->philos[i].init_time = get_curr_time();
         data->forks[i].fork_n = i;
         data->forks[i].busy = 0;
     }

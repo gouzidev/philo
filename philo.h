@@ -18,9 +18,6 @@ typedef struct s_data
 {
     t_philo *philos;
     t_fork *forks;
-    long time;
-    long start_time;
-    struct timeval *curr_time;
     int nthreads;
     int done;
     long time_to_die;
@@ -40,17 +37,18 @@ typedef struct s_fork
 typedef struct s_philo
 {
     int philo_id;
+    long init_time;
     long time_eat;
     long time_sleep;
     long time_think;
     long time_die;
+    long time_last_meal;
     int is_dead;
     pthread_t thread;
     t_fork     *right_hand;
     t_fork     *left_hand;
     t_data      *data;
 } t_philo;
-
 
 int	ft_atoi(const char *str);
 int is_odd(int n);
@@ -64,4 +62,6 @@ void ph_eat(t_data *data, int philo_id);
 void ph_sleep(t_data *data, int philo_id);
 void LOCK(pthread_mutex_t *thread);
 void UNLOCK(pthread_mutex_t *thread);
+long get_curr_time();
+void check_death(t_philo *philo);
 #endif
