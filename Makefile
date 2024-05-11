@@ -6,7 +6,7 @@ OBJ = $(SRC:.c=.o)
 
 CFLAGS = -Wall -Werror -Wextra -g
 
-# THREADFLAG = -fsanitize=thread
+THREADFLAG = -fsanitize=thread
 
 all: $(NAME) clean
 	clear

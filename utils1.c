@@ -45,9 +45,7 @@ void ph_eat(t_data *data, int philo_id)
 
 void ph_sleep(t_data *data, int philo_id)
 {
-    struct timeval tv;
     safe_print("%ld %d is sleeping\n", data, philo_id);
     usleep(data->time_to_sleep * 1000);
-    gettimeofday(&tv, NULL);
 }
 

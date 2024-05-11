@@ -11,7 +11,7 @@ void init_fork_mutexes(t_data *data)
     i = 0;
     while (i < data->nthreads)
     {
-        pthread_mutex_init(&data->forks[i].fork_mutex, NULL);
+        pthread_mutex_init(&data->forks[i], NULL);
         i++;
     }
 }
@@ -23,7 +23,7 @@ void dest_fork_mutexes(t_data *data)
     i = 0;
     while (i < data->nthreads)
     {
-        pthread_mutex_destroy(&data->forks[i].fork_mutex);
+        pthread_mutex_destroy(&data->forks[i]);
         i++;
     }
 }
@@ -36,9 +36,10 @@ void check_death(t_philo *philo)
     pthread_mutex_lock(&philo->data->printf_mutex);
     curr_time = get_curr_time();
     time_since_last_meal = curr_time - philo->time_last_meal;
+    // printf("checking death for %d time_since_last_meal -> %ld \n", philo->philo_id, time_since_last_meal);
     if (time_since_last_meal > philo->data->time_to_die)
     {
-        printf("%ld %d died\n", time_since_last_meal, philo->philo_id);
+        printf("%ld %d died\n", get_timestamp(philo->data), philo->philo_id);
         exit(0);
     }
     pthread_mutex_unlock(&philo->data->printf_mutex);
@@ -67,7 +68,7 @@ t_data *init_data (int ac, char *av[])
     tv = malloc(sizeof(struct timeval));
     gettimeofday(tv, NULL);
     data->philos = malloc(sizeof(t_philo) * data->nthreads);
-    data->forks = malloc(sizeof(t_fork) * data->nthreads);
+    data->forks = malloc(sizeof(t_fork) * sizeof(pthread_mutex_t));
     data->init_time = get_curr_time();
     i = -1;
     while (++i < data->nthreads)
