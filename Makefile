@@ -1,6 +1,6 @@
 NAME = philo
 
-SRC = philo.c init.c
+SRC = philo.c init.c utils.c utils1.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -8,7 +8,8 @@ CFLAGS = -Wall -Werror -Wextra -g
 
 # THREADFLAG = -fsanitize=thread
 
-all: $(NAME)
+all: $(NAME) clean
+	clear
 
 
 $(NAME): $(OBJ)

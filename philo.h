@@ -23,6 +23,7 @@ typedef struct s_data
     long time_to_die;
     long time_to_eat;
     long time_to_sleep;
+    long init_time;
     long n_eat_times;
     pthread_mutex_t printf_mutex;
 }   t_data;
@@ -30,8 +31,6 @@ typedef struct s_data
 typedef struct s_fork
 {
     pthread_mutex_t fork_mutex;
-    int fork_n;
-    int busy;
 }   t_fork;
 
 typedef struct s_philo
@@ -63,5 +62,6 @@ void ph_sleep(t_data *data, int philo_id);
 void LOCK(pthread_mutex_t *thread);
 void UNLOCK(pthread_mutex_t *thread);
 long get_curr_time();
+long get_timestamp(t_data *data);
 void check_death(t_philo *philo);
 #endif

@@ -19,7 +19,7 @@ void *routine(void *arg)
     data->done = 0;
     while (!data->done)
     {
-        check_death(philo_id);
+        check_death(philo);
         if (is_odd(philo_id))
         {
             LOCK(&forks[philo_id - 1].fork_mutex);
