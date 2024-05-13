@@ -6,11 +6,12 @@ void *monitoring(void *arg)
     int i;
     data = (t_data *)arg;
     while (!get_started(data))
+
+    usleep(1);
     while (!get_done(data))
     {
-        
         i = -1;
-        while (++i < data->nthreads)
+        while (++i < data->nthreads && !get_done(data))
         {
             if (gonna_die(data, i))
             {
@@ -19,7 +20,7 @@ void *monitoring(void *arg)
             }
         }
     }
-    return NULL;
+    return (NULL);
 }
 
 void while_true(t_data *data, int id)

@@ -71,7 +71,7 @@ void init_data (t_data *data)
         data->philos[i].left_hand = NULL;
         data->philos[i].right_hand = NULL;
         data->philos[i].init_time = get_curr_time();
-        data->philos[i].time_last_meal = get_curr_time();
+        data->philos[i].time_last_meal = get_curr_time() - data->init_time;
     }
     assign_forks(data);
     data->init_time = get_curr_time();
