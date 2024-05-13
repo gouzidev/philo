@@ -46,7 +46,6 @@ void setup_thread(t_data *data)
         set_started(data, 1);
 }
 
-
 void *routine(void *arg)
 {
     t_philo *philo;

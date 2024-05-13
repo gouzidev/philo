@@ -15,7 +15,7 @@ void ph_pair_eat(t_data *data, int id)
 {
     LOCK(&data->forks[id]);
     safe_print(data, id, "%ld %d has taken a right fork\n");
-    LOCK(&data->forks[(id + 1) % data->nthreads]);
+    LOCK(&data->forks[(id + 1) % data->nthreads]);  
     safe_print(data, id, "%ld %d has taken a left  fork\n");
     safe_print(data, id, "%ld %d is eating\n");
     usleep(data->time_to_eat * 1000);
@@ -79,8 +79,5 @@ int gonna_die(t_data *data, int ph_id)
 
     philo = &data->philos[ph_id];
     long now = get_curr_time();
-    LOCK(&data->printf_mutex);
-    printf("checking \n");
-    UNLOCK(&data->printf_mutex);
     return (now - philo->time_last_meal > data->time_to_eat);
 }

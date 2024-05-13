@@ -82,12 +82,12 @@ void create_threads(t_data *data, void *(*routine)(void *))
     int i;
 
     i = 0;
+    pthread_create(&data->monitor, NULL, monitoring, data);
     while (i < data->nthreads)
     {
         pthread_create(&data->philos[i].thread, NULL, routine, &data->philos[i]);
         i++;
     }
-    pthread_create(&data->monitor, NULL, monitoring, data);
 }
 
 void join_threads(t_data *data)
