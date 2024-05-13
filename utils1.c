@@ -1,51 +1,27 @@
 #include "philo.h"
 
-int	ft_atoi(const char *str)
+int is_odd(int n)
 {
-	int	i;
-	int	sign;
-	int	res;
-
-	res = 0;
-	sign = 1;
-	i = 0;
-	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			sign = -1;
-		i++;
-	}
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		res = res * 10 + (str[i] - 48);
-		i++;
-	}
-	return (res * sign);
+    return n % 2;
 }
 
-void safe_print(char *msg, t_data *data, int philo_id)
+void LOCK(pthread_mutex_t *thread)
 {
-    long curr_timestamp;
-
-    curr_timestamp = get_timestamp(data);
-    pthread_mutex_lock(&data->printf_mutex);
-    printf(msg, curr_timestamp, philo_id);
-    pthread_mutex_unlock(&data->printf_mutex);
+    pthread_mutex_lock(thread);
 }
-
-void ph_eat(t_data *data, int philo_id)
+void UNLOCK(pthread_mutex_t *thread)
 {
-    safe_print("%ld %d is eating\n", data, philo_id);
-    usleep(data->time_to_eat * 1000);
-    data->philos[philo_id].time_last_meal = get_curr_time();
-
+    pthread_mutex_unlock(thread);
 }
-
-void ph_sleep(t_data *data, int philo_id)
+long get_curr_time()
 {
-    safe_print("%ld %d is sleeping\n", data, philo_id);
-    usleep(data->time_to_sleep * 1000);
+    struct timeval now;
+    long time_mille;
+    gettimeofday(&now, NULL);
+    time_mille = (now.tv_sec * 1000) + (now.tv_usec / 1000);
+    return time_mille;
 }
-
+long get_timestamp(t_data *data)
+{
+    return get_curr_time() - data->init_time;
+}

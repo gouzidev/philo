@@ -1,26 +1,37 @@
 #include "philo.h"
 
-int is_odd(int n)
+int	ft_atoi(const char *str)
 {
-    return n % 2;
+	int	i;
+	int	sign;
+	int	res;
+
+	res = 0;
+	sign = 1;
+	i = 0;
+	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
+		i++;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			sign = -1;
+		i++;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		res = res * 10 + (str[i] - 48);
+		i++;
+	}
+	return (res * sign);
 }
-void LOCK(pthread_mutex_t *thread)
+
+void safe_print(t_data *data, int id, char *msg)
 {
-    pthread_mutex_lock(thread);
+	long curr_timestamp;
+
+    LOCK(&data->printf_mutex);
+    curr_timestamp = get_timestamp(data);
+    printf(msg, curr_timestamp, id);
+    UNLOCK(&data->printf_mutex);
 }
-void UNLOCK(pthread_mutex_t                                                                                                             *thread)
-{
-    pthread_mutex_unlock(thread);
-}
-long get_curr_time()
-{
-    struct timeval now;
-    long time_mille;
-    gettimeofday(&now, NULL);
-    time_mille = (now.tv_sec * 1000) + (now.tv_usec / 1000);
-    return time_mille;
-}
-long get_timestamp(t_data *data)
-{
-    return get_curr_time() - data->init_time;
-}
+

@@ -17,15 +17,23 @@ typedef struct s_fork t_fork;
 typedef struct s_data
 {
     t_philo *philos;
+    pthread_t monitor;
     pthread_mutex_t *forks;
     int nthreads;
-    int done;
+    long done;
+    pthread_mutex_t done_mutex;
+    long started;
+    pthread_mutex_t started_mutex;
+    pthread_mutex_t printf_mutex;
+    pthread_mutex_t time_mutex;
+    int ready_threads_count;
+    pthread_mutex_t ready_threads_count_mutex;
     long time_to_die;
     long time_to_eat;
     long time_to_sleep;
+    long time;
     long init_time;
     long n_eat_times;
-    pthread_mutex_t printf_mutex;
 }   t_data;
 
 typedef struct s_fork
@@ -35,33 +43,75 @@ typedef struct s_fork
 
 typedef struct s_philo
 {
-    int philo_id;
+    int id;
     long init_time;
     long time_eat;
     long time_sleep;
     long time_think;
     long time_die;
     long time_last_meal;
-    int is_dead;
+    int gonna_die;
+    long eat_count;
+    pthread_mutex_t     eat_count_mutex;
     pthread_t thread;
     pthread_mutex_t     *right_hand;
     pthread_mutex_t     *left_hand;
     t_data      *data;
 } t_philo;
 
+/* safe.c */
+long    get_done(t_data *data);
+long    get_started(t_data *data);
+long    get_time(t_data *data);
+long    get_ready_threads_count(t_data *data);
+long    get_eat_count(t_philo *philo);
+
+void    set_done(t_data *data, long new_done);
+void    set_started(t_data *data, long new_started);
+void    set_time(t_data *data, long new_time);
+void    set_ready_threads_count(t_data *data, long new_ready_threads_count);
+void    set_eat_count(t_philo *philo, long new_eat_count);
+
 int	ft_atoi(const char *str);
 int is_odd(int n);
-void safe_print(char *msg,t_data *data, int philo_id);
-void init_fork_mutexes(t_data *data);
+// void print(char *msg,t_data *data, int id);
+void init_mutexes(t_data *data);
 void create_threads(t_data *data, void *(*routine)(void *));
 void join_threads(t_data *data);
-t_data *init_data (int ac, char *av[]);
-void dest_fork_mutexes(t_data *data);
-void ph_eat(t_data *data, int philo_id);
-void ph_sleep(t_data *data, int philo_id);
+void assign_forks(t_data *data);
+t_data *parse(int ac, char *av[]);
+void init_data (t_data *data);
+void dest_mutexes(t_data *data);
+void ph_eat(t_data *data, int id);
+void ph_sleep(t_data *data, int id);
+void ph_think(t_data *data, int id);
+void ph_die(t_data *data, int id);
 void LOCK(pthread_mutex_t *thread);
 void UNLOCK(pthread_mutex_t *thread);
 long get_curr_time();
 long get_timestamp(t_data *data);
-void check_death(t_philo *philo);
+int gonna_die(t_data *data, int ph_id);
+
+void *monitoring(void *arg);
+void *routine(void *arg);
+void while_true(t_data *data, int id);
+void setup_thread(t_data *data);
+/* ph.c */
+void ph_think(t_data *data, int id);
+void ph_eat(t_data *data, int id);
+void ph_sleep(t_data *data, int id);
+void ph_die(t_data *data, int id);
+int gonna_die(t_data *data, int ph_id);
+
+/* utils.c */
+int	ft_atoi(const char *str);
+void safe_print(t_data *data, int id, char *msg);
+
+/* utils1.c */
+int is_odd(int n);
+void LOCK(pthread_mutex_t *thread);
+void UNLOCK(pthread_mutex_t *thread);
+long get_curr_time();
+long get_timestamp(t_data *data);
+
 #endif
