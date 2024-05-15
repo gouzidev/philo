@@ -77,6 +77,8 @@ void init_data (t_data *data)
     assign_forks(data);
     data->init_time = get_curr_time();
     set_done(data, 0);
+    set_started(data, 0);
+    set_ready_threads_count(data, 0);
 }
 
 void create_threads(t_data *data, void *(*routine)(void *))
@@ -97,12 +99,12 @@ void join_threads(t_data *data)
     int i;
 
     i = 0;
+    pthread_join(data->monitor, NULL);
     while (i < data->nthreads)
     {
         pthread_join(data->philos[i].thread, NULL);
         i++;
     }
-    pthread_join(data->monitor, NULL);
 }
 
 void assign_forks(t_data *data)
