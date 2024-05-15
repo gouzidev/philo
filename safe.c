@@ -44,3 +44,12 @@ long    get_eat_count(t_philo *philo)
     UNLOCK(&philo->eat_count_mutex);
     return (eat_count);
 }
+
+long    get_last_ate(t_philo *philo)
+{
+    long last_ate;
+    LOCK(&philo->last_ate_mutex);
+    last_ate = philo->last_ate;
+    UNLOCK(&philo->last_ate_mutex);
+    return (last_ate);
+}

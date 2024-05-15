@@ -3,10 +3,20 @@
 void *monitoring(void *arg)
 {
     t_data *data;
+    long started;
     int i;
     data = (t_data *)arg;
-    while (!get_started(data))
-
+    safe_print(data, -1, "sffsfsdfdsfdsf\n");
+    started = get_started(data);
+    while (!started)
+    {
+        started = get_started(data);
+        LOCK(&data->printf_mutex);
+        printf("started = %ld\n", data->started);
+        printf("nthreads = %d\n", data->nthreads);
+        UNLOCK(&data->printf_mutex);
+    }
+    
     usleep(1);
     while (!get_done(data))
     {
@@ -30,8 +40,6 @@ void while_true(t_data *data, int id)
         if (!get_done(data))
             ph_eat(data, id);
         if (!get_done(data))
-            ph_sleep(data, id);
-        if (!get_done(data))
             ph_think(data, id);
     }
     return ;
@@ -39,11 +47,8 @@ void while_true(t_data *data, int id)
 
 void setup_thread(t_data *data)
 {
-    long ready_threads_count;
-    ready_threads_count = get_ready_threads_count(data);
-    set_ready_threads_count(data, ready_threads_count + 1);
-    ready_threads_count = get_ready_threads_count(data);
-    if (ready_threads_count == data->nthreads)
+    set_ready_threads_count(data, get_ready_threads_count(data) + 1);
+    if (get_ready_threads_count(data) == data->nthreads)
         set_started(data, 1);
 }
 

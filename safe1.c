@@ -34,3 +34,10 @@ void set_eat_count(t_philo *philo, long new_eat_count)
     philo->eat_count = new_eat_count;
     UNLOCK(&philo->eat_count_mutex);
 }
+
+void set_last_ate(t_philo *philo, long new_last_ate)
+{
+    LOCK(&philo->last_ate_mutex);
+    philo->last_ate = new_last_ate;
+    UNLOCK(&philo->last_ate_mutex);
+}

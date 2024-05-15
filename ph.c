@@ -11,48 +11,77 @@ void ph_think(t_data *data, int id)
     printf("%ld %d is thinking\n", curr_timestamp, id);
     UNLOCK(&data->printf_mutex);
 }
-void ph_pair_eat(t_data *data, int id)
+int ph_pair_eat(t_data *data, int id)
 {
+    if (get_done(data))
+        return 0;
     LOCK(&data->forks[id]);
+    if (get_done(data)) {
+        UNLOCK(&data->forks[id]);
+        return -1;
+    }
     safe_print(data, id, "%ld %d has taken a right fork\n");
+
     if (data->nthreads > 1)
     {
-        LOCK(&data->forks[(id + 1) % data->nthreads]);  
+        LOCK(&data->forks[(id + 1) % data->nthreads]);
+        if (get_done(data)) {
+            UNLOCK(&data->forks[(id + 1) % data->nthreads]);
+            UNLOCK(&data->forks[id]);
+            return -1;
+        }
         safe_print(data, id, "%ld %d has taken a left  fork\n");
         safe_print(data, id, "%ld %d is eating\n");
         usleep(data->time_to_eat * 1000);
+        set_last_ate(&data->philos[id], get_curr_time());
         UNLOCK(&data->forks[(id + 1) % data->nthreads]);
     }
     UNLOCK(&data->forks[id]);
-    data->philos[id].time_last_meal = get_curr_time();
+    return 0;
 }
 
-void ph_impair_eat(t_data *data, int id)
+int ph_impair_eat(t_data *data, int id)
 {
+    if (get_done(data))
+        return 0;
     LOCK(&data->forks[(id + 1) % data->nthreads]);
+    if (get_done(data)) {
+        UNLOCK(&data->forks[(id + 1) % data->nthreads]);
+        return -1;
+    }
     safe_print(data, id, "%ld %d has taken a left  fork\n");
     LOCK(&data->forks[id]);
+    if (get_done(data)) {
+        UNLOCK(&data->forks[id]);
+        UNLOCK(&data->forks[(id + 1) % data->nthreads]);
+        return -1;
+    }
     safe_print(data, id, "%ld %d has taken a right fork\n");
     safe_print(data, id, "%ld %d is eating\n");
     usleep(data->time_to_eat * 1000);
+    set_last_ate(&data->philos[id], get_curr_time());
     UNLOCK(&data->forks[(id + 1) % data->nthreads]); 
     UNLOCK(&data->forks[id]);
-    data->philos[id].time_last_meal = get_curr_time();
+    return 0;
 }
 
-void decide_first_fork(t_data *data, int id)
+int decide_first_fork(t_data *data, int id)
 {
+    int sig;
+
     if (id % 2 == 0) /* pair */
-        ph_pair_eat(data, id);
+        sig = ph_pair_eat(data, id);
     else
-        ph_impair_eat(data, id);
+        sig = ph_impair_eat(data, id);
+    return sig;
 }
 
 void ph_eat(t_data *data, int id)
 {
     if (get_done(data))
         return;
-    decide_first_fork(data, id);
+    if (decide_first_fork(data, id) != -1 && !get_done(data))
+        ph_sleep(data, id);
 }
 
 void ph_sleep(t_data *data, int id)
@@ -78,12 +107,9 @@ void ph_die(t_data *data, int id)
 }
 int gonna_die(t_data *data, int ph_id)
 {
-    t_philo *philo;
-
-    philo = &data->philos[ph_id];
+    long last_ate;
     long now = get_curr_time();
-    LOCK(&data->printf_mutex);
-    printf("-> %ld\n", philo->time_last_meal);
+    last_ate = get_last_ate(&data->philos[ph_id]);
     UNLOCK(&data->printf_mutex);
-    return (now - philo->time_last_meal > data->time_to_eat);
+    return (now - last_ate > data->time_to_eat);
 }

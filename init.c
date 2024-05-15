@@ -62,6 +62,7 @@ void init_data (t_data *data)
     data->philos = malloc(sizeof(t_philo) * data->nthreads);
     data->forks = malloc(sizeof(pthread_mutex_t) * data->nthreads);
     data->init_time = get_curr_time();
+    set_ready_threads_count(data, 0);
     i = -1;
     while (++i < data->nthreads)
     {
@@ -71,10 +72,11 @@ void init_data (t_data *data)
         data->philos[i].left_hand = NULL;
         data->philos[i].right_hand = NULL;
         data->philos[i].init_time = get_curr_time();
-        data->philos[i].time_last_meal = get_curr_time() - data->init_time;
+        data->philos[i].last_ate = get_curr_time();
     }
     assign_forks(data);
     data->init_time = get_curr_time();
+    set_done(data, 0);
 }
 
 void create_threads(t_data *data, void *(*routine)(void *))

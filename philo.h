@@ -32,6 +32,7 @@ typedef struct s_data
     long time_to_eat;
     long time_to_sleep;
     long time;
+    long time_stamp;
     long init_time;
     long n_eat_times;
 }   t_data;
@@ -49,9 +50,10 @@ typedef struct s_philo
     long time_sleep;
     long time_think;
     long time_die;
-    long time_last_meal;
+    long last_ate;
     int gonna_die;
     long eat_count;
+    pthread_mutex_t     last_ate_mutex;
     pthread_mutex_t     eat_count_mutex;
     pthread_t thread;
     pthread_mutex_t     *right_hand;
@@ -65,12 +67,13 @@ long    get_started(t_data *data);
 long    get_time(t_data *data);
 long    get_ready_threads_count(t_data *data);
 long    get_eat_count(t_philo *philo);
-
+long    get_last_ate(t_philo *philo);
 void    set_done(t_data *data, long new_done);
 void    set_started(t_data *data, long new_started);
 void    set_time(t_data *data, long new_time);
 void    set_ready_threads_count(t_data *data, long new_ready_threads_count);
 void    set_eat_count(t_philo *philo, long new_eat_count);
+void set_last_ate(t_philo *philo, long new_last_ate);
 
 int	ft_atoi(const char *str);
 int is_odd(int n);
