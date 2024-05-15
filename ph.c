@@ -36,6 +36,8 @@ int ph_pair_eat(t_data *data, int id)
         set_last_ate(&data->philos[id], get_curr_time());
         UNLOCK(&data->forks[(id + 1) % data->nthreads]);
     }
+    else
+        return -1;
     UNLOCK(&data->forks[id]);
     return 0;
 }
@@ -110,6 +112,5 @@ int gonna_die(t_data *data, int ph_id)
     long last_ate;
     long now = get_curr_time();
     last_ate = get_last_ate(&data->philos[ph_id]);
-    UNLOCK(&data->printf_mutex);
-    return (now - last_ate > data->time_to_eat);
+    return (now - last_ate > data->time_to_die);
 }
