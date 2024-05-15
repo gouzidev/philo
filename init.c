@@ -11,12 +11,15 @@ void init_mutexes(t_data *data)
     while (i < data->nthreads)
     {
         pthread_mutex_init(&data->forks[i], NULL);
+        pthread_mutex_init(&data->philos[i].last_ate_mutex, NULL);
+        pthread_mutex_init(&data->philos[i].eat_count_mutex, NULL);
         i++;
     }
     pthread_mutex_init(&data->printf_mutex, NULL);
     pthread_mutex_init(&data->started_mutex, NULL);
     pthread_mutex_init(&data->done_mutex, NULL);
     pthread_mutex_init(&data->time_mutex, NULL);
+    pthread_mutex_init(&data->ready_threads_count_mutex, NULL);
 }
 
 void dest_mutexes(t_data *data)
@@ -27,12 +30,15 @@ void dest_mutexes(t_data *data)
     while (i < data->nthreads)
     {
         pthread_mutex_destroy(&data->forks[i]);
+        pthread_mutex_destroy(&data->philos[i].last_ate_mutex);
+        pthread_mutex_destroy(&data->philos[i].eat_count_mutex);
         i++;
     }
     pthread_mutex_destroy(&data->printf_mutex);
     pthread_mutex_destroy(&data->started_mutex);
     pthread_mutex_destroy(&data->done_mutex);
     pthread_mutex_destroy(&data->time_mutex);
+    pthread_mutex_destroy(&data->ready_threads_count_mutex);
 }
 
 t_data *parse(int ac, char *av[])
@@ -76,9 +82,6 @@ void init_data (t_data *data)
     }
     assign_forks(data);
     data->init_time = get_curr_time();
-    set_done(data, 0);
-    set_started(data, 0);
-    set_ready_threads_count(data, 0);
 }
 
 void create_threads(t_data *data, void *(*routine)(void *))
@@ -86,10 +89,10 @@ void create_threads(t_data *data, void *(*routine)(void *))
     int i;
 
     i = 0;
-    pthread_create(&data->monitor, NULL, monitoring, data);
     while (i < data->nthreads)
     {
         pthread_create(&data->philos[i].thread, NULL, routine, &data->philos[i]);
+        set_ready_threads_count(data, get_ready_threads_count(data) + 1);
         i++;
     }
 }
@@ -99,7 +102,6 @@ void join_threads(t_data *data)
     int i;
 
     i = 0;
-    pthread_join(data->monitor, NULL);
     while (i < data->nthreads)
     {
         pthread_join(data->philos[i].thread, NULL);

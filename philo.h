@@ -17,7 +17,6 @@ typedef struct s_fork t_fork;
 typedef struct s_data
 {
     t_philo *philos;
-    pthread_t monitor;
     pthread_mutex_t *forks;
     int nthreads;
     long done;
@@ -36,11 +35,6 @@ typedef struct s_data
     long init_time;
     long n_eat_times;
 }   t_data;
-
-typedef struct s_fork
-{
-    pthread_mutex_t fork_mutex;
-}   t_fork;
 
 typedef struct s_philo
 {
