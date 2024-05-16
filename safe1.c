@@ -41,3 +41,9 @@ void set_last_ate(t_philo *philo, long new_last_ate)
     philo->last_ate = new_last_ate;
     UNLOCK(&philo->last_ate_mutex);
 }
+void set_used_forks(t_philo *philo, long new_used_forks)
+{
+    LOCK(&philo->used_forks_mutex);
+    philo->used_forks = new_used_forks;
+    UNLOCK(&philo->used_forks_mutex);
+}

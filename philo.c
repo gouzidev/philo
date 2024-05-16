@@ -2,25 +2,24 @@
 
 void while_true(t_data *data, int id)
 {
+    int sig;
     while (!get_done(data))
     {
-        if (!get_done(data))
-            ph_eat(data, id);
-        if (!get_done(data))
-            ph_think(data, id);
+        LOCK(&data->printf_mutex);
+        printf("%ld %d is fucking\n", get_timestamp(data), id);
+        UNLOCK(&data->printf_mutex);
+        if (get_done(data))
+            break;
+        sig = decide_first_fork(data, id);
+        if (sig != -1 && !get_done(data))
+            ph_sleep(data, id);
     }
     return ;
 }
 void observer(t_data *data)
 {
     int i;
-    while (get_ready_threads_count(data) != data->nthreads)
-    {
-        LOCK(&data->printf_mutex);
-        printf("waiting for threads to start\n");
-        UNLOCK(&data->printf_mutex);
-        usleep(1);
-    }
+    while (get_ready_threads_count(data) != data->nthreads);
     while (!get_done(data))
     {
         i = 0;
@@ -48,9 +47,20 @@ void *routine(void *arg)
 
     philo = (t_philo *)arg;
     data = philo->data;
-    while (get_ready_threads_count(data) != data->nthreads)
-        usleep(1);
+    set_used_forks(philo, 0);
+        LOCK(&data->printf_mutex);
+    printf("Thread %d is ready\n", philo->id);
+    UNLOCK(&data->printf_mutex);
+    while (get_ready_threads_count(data) != data->nthreads);
+    LOCK(&data->printf_mutex);
+    printf("Thread %d is starting\n", philo->id);
+    UNLOCK(&data->printf_mutex);
     while_true(data, philo->id);
+    LOCK(&data->printf_mutex);
+    printf("Thread %d is done\n", philo->id);
+    UNLOCK(&data->printf_mutex);
+    if (get_used_fork(philo) == 1)
+        UNLOCK(&data->forks[philo->id]);
     return NULL;
 }
 
@@ -67,5 +77,6 @@ int main(int ac, char *av[])
     create_threads(data, routine);
     observer(data);
     join_threads(data);
+    printf("All threads joined\n");
     dest_mutexes(data);
 }

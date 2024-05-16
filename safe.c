@@ -53,3 +53,13 @@ long    get_last_ate(t_philo *philo)
     UNLOCK(&philo->last_ate_mutex);
     return (last_ate);
 }
+
+
+long    get_used_fork(t_philo *philo)
+{
+    long used_forks;
+    LOCK(&philo->used_forks_mutex);
+    used_forks = philo->used_forks;
+    UNLOCK(&philo->used_forks_mutex);
+    return (used_forks);
+}

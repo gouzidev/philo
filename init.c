@@ -116,6 +116,12 @@ void assign_forks(t_data *data)
 
     nphilos = data->nthreads;
     i = -1;
+    if (nphilos == 1)
+    {
+        data->philos[0].right_hand = &data->forks[0];
+        data->philos[0].left_hand = NULL;
+        return ;
+    }
     while (++i < data->nthreads)
     {
         data->philos[i].right_hand = &data->forks[i];

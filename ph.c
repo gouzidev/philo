@@ -16,8 +16,10 @@ int ph_pair_eat(t_data *data, int id)
     if (get_done(data))
         return 0;
     LOCK(&data->forks[id]);
+    set_used_forks(&data->philos[id], 1);
     if (get_done(data)) {
         UNLOCK(&data->forks[id]);
+        set_used_forks(&data->philos[id], 0);
         return -1;
     }
     safe_print(data, id, "%ld %d has taken a right fork\n");
@@ -25,6 +27,7 @@ int ph_pair_eat(t_data *data, int id)
     if (data->nthreads > 1)
     {
         LOCK(&data->forks[(id + 1) % data->nthreads]);
+        set_used_forks(&data->philos[id], 2);
         if (get_done(data)) {
             UNLOCK(&data->forks[(id + 1) % data->nthreads]);
             UNLOCK(&data->forks[id]);
@@ -37,7 +40,10 @@ int ph_pair_eat(t_data *data, int id)
         UNLOCK(&data->forks[(id + 1) % data->nthreads]);
     }
     else
+    {
+        set_used_forks(&data->philos[id], 1);
         return -1;
+    }
     UNLOCK(&data->forks[id]);
     return 0;
 }
@@ -49,6 +55,7 @@ int ph_impair_eat(t_data *data, int id)
     LOCK(&data->forks[(id + 1) % data->nthreads]);
     if (get_done(data)) {
         UNLOCK(&data->forks[(id + 1) % data->nthreads]);
+        set_used_forks(&data->philos[id], 0);
         return -1;
     }
     safe_print(data, id, "%ld %d has taken a left  fork\n");
@@ -56,6 +63,7 @@ int ph_impair_eat(t_data *data, int id)
     if (get_done(data)) {
         UNLOCK(&data->forks[id]);
         UNLOCK(&data->forks[(id + 1) % data->nthreads]);
+        set_used_forks(&data->philos[id], 0);
         return -1;
     }
     safe_print(data, id, "%ld %d has taken a right fork\n");
@@ -98,6 +106,9 @@ void ph_sleep(t_data *data, int id)
     printf("%ld %d is sleeping\n", curr_timestamp, id);
     UNLOCK(&data->printf_mutex);
     usleep(data->time_to_sleep * 1000);
+    if (get_done(data))
+        return;
+    ph_think(data, id);
 }
 
 void ph_die(t_data *data, int id)
