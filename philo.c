@@ -72,6 +72,5 @@ int main(int ac, char *av[])
     create_threads(data, routine);
     observer(data);
     join_threads(data);
-    printf("All threads joined\n");
     dest_mutexes(data);
 }

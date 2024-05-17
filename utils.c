@@ -29,7 +29,7 @@ void safe_print(t_data *data, int id, char *msg)
 {
 	long curr_timestamp;
 
-
+	if (get_done(data)) return;
 	
     LOCK(&data->printf_mutex);
     curr_timestamp = get_timestamp(data);
@@ -37,3 +37,8 @@ void safe_print(t_data *data, int id, char *msg)
     UNLOCK(&data->printf_mutex);
 }
 
+void safe_usleep(t_data *data, long n)
+{
+	if (get_done(data)) return;
+	usleep(n);
+}

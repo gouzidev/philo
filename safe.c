@@ -63,3 +63,4 @@ long    get_used_fork(t_philo *philo)
     UNLOCK(&philo->used_forks_mutex);
     return (used_forks);
 }
+

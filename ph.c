@@ -37,7 +37,7 @@ int ft_eat(t_data *data, t_philo *philo)
             return (0);
         }
         safe_print(data, philo->id, "%ld %d is eating\n");
-        usleep(data->time_to_eat * 1000);
+        safe_usleep(data, data->time_to_eat * 1000);
         UNLOCK(philo->left_hand);
         UNLOCK(philo->right_hand);
     }
@@ -61,7 +61,7 @@ int ft_eat(t_data *data, t_philo *philo)
             return (0);
         }
         safe_print(data, philo->id, "%ld %d is eating\n");
-        usleep(data->time_to_eat * 1000);
+        safe_usleep(data, data->time_to_eat * 1000);
         UNLOCK(philo->right_hand);
         UNLOCK(philo->left_hand);
     }
@@ -77,7 +77,6 @@ void do_routine(t_data *data, int id)
 
     if (get_done(data))
         return;
-    safe_print(data, id, "%ld %d is thinking\n");
     ate = ft_eat(data, &data->philos[id]);
     if (!ate)
         return;
@@ -96,7 +95,7 @@ int ft_sleep(t_data *data, int id)
     if (get_done(data))
         return 0;
     safe_print(data, id, "%ld %d is sleeping\n");
-    usleep(data->time_to_sleep * 1000);
+    safe_usleep(data, data->time_to_sleep * 1000);
     if (get_done(data))
         return 0;
     return 1;
