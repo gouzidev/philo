@@ -21,7 +21,7 @@ void observer(t_data *data)
             {
                 set_done(data, 1);
                 LOCK(&data->printf_mutex);
-                printf("%ld %d died\n", get_timestamp(data), i);
+                printf("%ld %d has died\n", get_timestamp(data), data->philos[i].id);
                 UNLOCK(&data->printf_mutex);
                 break;
             }
@@ -33,7 +33,8 @@ void observer(t_data *data)
 void *routine(void *arg)
 {
     // increment ready_threads_count
-
+    int ate;
+    int slept;
     t_philo *philo;
     t_data *data;
 
@@ -42,20 +43,19 @@ void *routine(void *arg)
     while (get_ready_threads_count(data) != data->nthreads);
     while (!get_done(data))
     {
-        do_routine(data, philo->id);
+        ate = ft_eat(data, philo);
+        if (!ate)
+            return NULL;
+        if (get_done(data))
+            return NULL;
+        slept = ft_sleep(data, philo->id);
+        if (!slept)
+            return NULL;
+        if (get_done(data))
+            return NULL;
+        ft_think(data, philo->id);
     }
     
-    return NULL;
-}
-
-void *lone_philo_routine(t_data *data)
-{
-    while (1)
-    {
-        ft_think(data, 0);
-        ft_eat(data, 0);
-        ft_sleep(data, 0);
-    }
     return NULL;
 }
 

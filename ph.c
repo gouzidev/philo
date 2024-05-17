@@ -70,25 +70,6 @@ int ft_eat(t_data *data, t_philo *philo)
 
 }
 
-void do_routine(t_data *data, int id)
-{
-    int ate;
-    int slept;
-
-    if (get_done(data))
-        return;
-    ate = ft_eat(data, &data->philos[id]);
-    if (!ate)
-        return;
-    if (get_done(data))
-        return;
-    slept = ft_sleep(data, id);
-    if (!slept)
-        return;
-    if (get_done(data))
-        return;
-    ft_think(data, id);
-}
 
 int ft_sleep(t_data *data, int id)
 {
