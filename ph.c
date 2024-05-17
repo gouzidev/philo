@@ -1,120 +1,111 @@
 #include "philo.h"
 
-void ph_think(t_data *data, int id)
+int ft_think(t_data *data, int id)
 {
     if (get_done(data))
-        return;
+        return 0;
     long curr_timestamp;
 
     curr_timestamp = get_timestamp(data);
+    if (get_done(data))
+        return 0;
     LOCK(&data->printf_mutex);
     printf("%ld %d is thinking\n", curr_timestamp, id);
     UNLOCK(&data->printf_mutex);
+    return 1;
 }
-int ph_pair_eat(t_data *data, int id)
-{
-    if (get_done(data))
-        return 0;
-    LOCK(&data->forks[id]);
-    set_used_forks(&data->philos[id], 1);
-    if (get_done(data)) {
-        UNLOCK(&data->forks[id]);
-        set_used_forks(&data->philos[id], 0);
-        return -1;
-    }
-    safe_print(data, id, "%ld %d has taken a right fork\n");
 
-    if (data->nthreads > 1)
+int ft_eat(t_data *data, t_philo *philo)
+{
+    if (philo->id % 2 == 0)
     {
-        LOCK(&data->forks[(id + 1) % data->nthreads]);
-        set_used_forks(&data->philos[id], 2);
-        if (get_done(data)) {
-            UNLOCK(&data->forks[(id + 1) % data->nthreads]);
-            UNLOCK(&data->forks[id]);
-            return -1;
+        if (get_done(data))
+            return (0);
+        LOCK(philo->right_hand);
+        safe_print(data, philo->id, "%ld %d has taken right fork\n");
+        if (get_done(data))
+        {
+            UNLOCK(philo->right_hand);
+            return (0);
         }
-        safe_print(data, id, "%ld %d has taken a left  fork\n");
-        safe_print(data, id, "%ld %d is eating\n");
+        LOCK(philo->left_hand);
+        safe_print(data, philo->id, "%ld %d has taken left  fork\n");
+        if (get_done(data))
+        {
+            UNLOCK(philo->left_hand);
+            UNLOCK(philo->right_hand);
+            return (0);
+        }
+        safe_print(data, philo->id, "%ld %d is eating\n");
         usleep(data->time_to_eat * 1000);
-        set_last_ate(&data->philos[id], get_curr_time());
-        UNLOCK(&data->forks[(id + 1) % data->nthreads]);
+        UNLOCK(philo->left_hand);
+        UNLOCK(philo->right_hand);
     }
     else
     {
-        set_used_forks(&data->philos[id], 1);
-        return -1;
+        if (get_done(data))
+            return (0);
+        LOCK(philo->left_hand);
+        safe_print(data, philo->id, "%ld %d has taken left  fork\n");
+        if (get_done(data))
+        {
+            UNLOCK(philo->left_hand);
+            return (0);
+        }
+        LOCK(philo->right_hand);
+        safe_print(data, philo->id, "%ld %d has taken right fork\n");
+        if (get_done(data))
+        {
+            UNLOCK(philo->right_hand);
+            UNLOCK(philo->left_hand);
+            return (0);
+        }
+        safe_print(data, philo->id, "%ld %d is eating\n");
+        usleep(data->time_to_eat * 1000);
+        UNLOCK(philo->right_hand);
+        UNLOCK(philo->left_hand);
     }
-    UNLOCK(&data->forks[id]);
-    return 0;
+    set_last_ate(philo, get_curr_time());
+    return (1);
+
 }
 
-int ph_impair_eat(t_data *data, int id)
+void do_routine(t_data *data, int id)
+{
+    int ate;
+    int slept;
+
+    if (get_done(data))
+        return;
+    safe_print(data, id, "%ld %d is thinking\n");
+    ate = ft_eat(data, &data->philos[id]);
+    if (!ate)
+        return;
+    if (get_done(data))
+        return;
+    slept = ft_sleep(data, id);
+    if (!slept)
+        return;
+    if (get_done(data))
+        return;
+    ft_think(data, id);
+}
+
+int ft_sleep(t_data *data, int id)
 {
     if (get_done(data))
         return 0;
-    LOCK(&data->forks[(id + 1) % data->nthreads]);
-    if (get_done(data)) {
-        UNLOCK(&data->forks[(id + 1) % data->nthreads]);
-        set_used_forks(&data->philos[id], 0);
-        return -1;
-    }
-    safe_print(data, id, "%ld %d has taken a left  fork\n");
-    LOCK(&data->forks[id]);
-    if (get_done(data)) {
-        UNLOCK(&data->forks[id]);
-        UNLOCK(&data->forks[(id + 1) % data->nthreads]);
-        set_used_forks(&data->philos[id], 0);
-        return -1;
-    }
-    safe_print(data, id, "%ld %d has taken a right fork\n");
-    safe_print(data, id, "%ld %d is eating\n");
-    usleep(data->time_to_eat * 1000);
-    set_last_ate(&data->philos[id], get_curr_time());
-    UNLOCK(&data->forks[(id + 1) % data->nthreads]); 
-    UNLOCK(&data->forks[id]);
-    return 0;
-}
-
-int decide_first_fork(t_data *data, int id)
-{
-    int sig;
-
-    if (id % 2 == 0) /* pair */
-        sig = ph_pair_eat(data, id);
-    else
-        sig = ph_impair_eat(data, id);
-    return sig;
-}
-
-void ph_eat(t_data *data, int id)
-{
-    if (get_done(data))
-        return;
-    if (decide_first_fork(data, id) != -1 && !get_done(data))
-        ph_sleep(data, id);
-}
-
-void ph_sleep(t_data *data, int id)
-{
-	long curr_timestamp;
-
-    if (get_done(data))
-        return;
-
-    curr_timestamp = get_timestamp(data);
-    LOCK(&data->printf_mutex);
-    printf("%ld %d is sleeping\n", curr_timestamp, id);
-    UNLOCK(&data->printf_mutex);
+    safe_print(data, id, "%ld %d is sleeping\n");
     usleep(data->time_to_sleep * 1000);
     if (get_done(data))
-        return;
-    ph_think(data, id);
+        return 0;
+    return 1;
 }
 
-void ph_die(t_data *data, int id)
+void ft_die(t_data *data, int id)
 {
     LOCK(&data->printf_mutex);
-    printf("%ld %d died\n\n", get_timestamp(data), id);
+    printf("%ld %d died\n", get_timestamp(data), id);
     set_done(data, 1);
     UNLOCK(&data->printf_mutex);
 }

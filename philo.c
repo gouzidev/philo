@@ -1,21 +1,13 @@
 #include "philo.h"
 
-void while_true(t_data *data, int id)
+int will_die(t_philo *philo)
 {
-    int sig;
-    while (!get_done(data))
-    {
-        LOCK(&data->printf_mutex);
-        printf("%ld %d is fucking\n", get_timestamp(data), id);
-        UNLOCK(&data->printf_mutex);
-        if (get_done(data))
-            break;
-        sig = decide_first_fork(data, id);
-        if (sig != -1 && !get_done(data))
-            ph_sleep(data, id);
-    }
-    return ;
+    long time_to_die;
+
+    time_to_die = philo->data->time_to_die;
+    return (get_curr_time() - get_last_ate(philo) > time_to_die);
 }
+
 void observer(t_data *data)
 {
     int i;
@@ -25,7 +17,7 @@ void observer(t_data *data)
         i = 0;
         while (i < data->nthreads)
         {
-            if (get_curr_time() - get_last_ate(&data->philos[i]) > data->time_to_die)
+            if (will_die(&data->philos[i]))
             {
                 set_done(data, 1);
                 LOCK(&data->printf_mutex);
@@ -47,20 +39,23 @@ void *routine(void *arg)
 
     philo = (t_philo *)arg;
     data = philo->data;
-    set_used_forks(philo, 0);
-        LOCK(&data->printf_mutex);
-    printf("Thread %d is ready\n", philo->id);
-    UNLOCK(&data->printf_mutex);
     while (get_ready_threads_count(data) != data->nthreads);
-    LOCK(&data->printf_mutex);
-    printf("Thread %d is starting\n", philo->id);
-    UNLOCK(&data->printf_mutex);
-    while_true(data, philo->id);
-    LOCK(&data->printf_mutex);
-    printf("Thread %d is done\n", philo->id);
-    UNLOCK(&data->printf_mutex);
-    if (get_used_fork(philo) == 1)
-        UNLOCK(&data->forks[philo->id]);
+    while (!get_done(data))
+    {
+        do_routine(data, philo->id);
+    }
+    
+    return NULL;
+}
+
+void *lone_philo_routine(t_data *data)
+{
+    while (1)
+    {
+        ft_think(data, 0);
+        ft_eat(data, 0);
+        ft_sleep(data, 0);
+    }
     return NULL;
 }
 
@@ -72,8 +67,8 @@ int main(int ac, char *av[])
     init_data(data);
     init_mutexes(data);
     set_done(data, 0);
-    set_started(data, 0);
     set_ready_threads_count(data, 0);
+    set_started(data, 0);
     create_threads(data, routine);
     observer(data);
     join_threads(data);

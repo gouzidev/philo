@@ -85,25 +85,23 @@ void assign_forks(t_data *data);
 t_data *parse(int ac, char *av[]);
 void init_data (t_data *data);
 void dest_mutexes(t_data *data);
-void ph_eat(t_data *data, int id);
-void ph_sleep(t_data *data, int id);
-void ph_think(t_data *data, int id);
-void ph_die(t_data *data, int id);
 void LOCK(pthread_mutex_t *thread);
 void UNLOCK(pthread_mutex_t *thread);
 long get_curr_time();
 long get_timestamp(t_data *data);
 int gonna_die(t_data *data, int ph_id);
 
-int decide_first_fork(t_data *data, int id);
+void do_routine(t_data *data, int id);
+
 void *routine(void *arg);
 void while_true(t_data *data, int id);
 void setup_thread(t_data *data);
+int will_die(t_philo *philo);
 /* ph.c */
-void ph_think(t_data *data, int id);
-void ph_eat(t_data *data, int id);
-void ph_sleep(t_data *data, int id);
-void ph_die(t_data *data, int id);
+int ft_think(t_data *data, int id);
+int ft_eat(t_data *data, t_philo *philo);
+int ft_sleep(t_data *data, int id);
+void ft_die(t_data *data, int id);
 int gonna_die(t_data *data, int ph_id);
 
 /* utils.c */

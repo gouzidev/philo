@@ -29,6 +29,8 @@ void safe_print(t_data *data, int id, char *msg)
 {
 	long curr_timestamp;
 
+
+	
     LOCK(&data->printf_mutex);
     curr_timestamp = get_timestamp(data);
     printf(msg, curr_timestamp, id);

@@ -20,6 +20,9 @@ void init_mutexes(t_data *data)
     pthread_mutex_init(&data->done_mutex, NULL);
     pthread_mutex_init(&data->time_mutex, NULL);
     pthread_mutex_init(&data->ready_threads_count_mutex, NULL);
+    set_done(data, 0);
+    set_started(data, 0);
+    set_ready_threads_count(data, 0);
 }
 
 void dest_mutexes(t_data *data)
