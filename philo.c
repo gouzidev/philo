@@ -21,7 +21,7 @@ void observer(t_data *data)
             {
                 set_done(data, 1);
                 LOCK(&data->printf_mutex);
-                printf("%ld %d has died\n", get_timestamp(data), data->philos[i].id);
+                printf("%ld %d died\n", get_timestamp(data), data->philos[i].id + 1);
                 UNLOCK(&data->printf_mutex);
                 break;
             }

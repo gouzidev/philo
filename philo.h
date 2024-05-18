@@ -115,5 +115,6 @@ void UNLOCK(pthread_mutex_t *thread);
 long get_curr_time();
 long get_timestamp(t_data *data);
 void safe_usleep(t_data *data, long n);
+void precise_usleep(t_data *data, long n);
 
 #endif
