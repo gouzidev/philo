@@ -77,7 +77,7 @@ void create_threads(t_data *data, void *(*routine)(void *))
     set_ready_threads(data, 0);
     while (i < data->nthreads)
     {
-    set_last_ate(&data->philos[i], millisecons_passed());
+        set_last_ate(&data->philos[i], millisecons_passed());
         pthread_create(&data->philos[i].thread, NULL, routine, &data->philos[i]);
         set_ready_threads(data, get_ready_threads(data) + 1);
         i++;
@@ -115,6 +115,6 @@ void assign_forks(t_data *data)
     while (++i < data->nthreads)
     {
         data->philos[i].right_hand = &data->forks[i];
-        data->philos[i].left_hand = &data->forks[i + 1 % nphilos];
+        data->philos[i].left_hand = &data->forks[(i + 1) % nphilos];
     }
 }

@@ -70,7 +70,6 @@ int ft_think(t_data *data, int id)
     curr_timestamp = get_timestamp(data);
     if (get_done(data))
         return 0;
-    precise_usleep(NULL, 1);
     if (get_done(data))
         return 0;
     LOCK(&data->printf_mutex);

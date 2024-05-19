@@ -12,16 +12,11 @@ int will_die(t_philo *philo)
     return (should_die);
 }
 
-void wait_all_threads(t_data *data)
-{
-    while (get_ready_threads(data) < data->nthreads)
-        ;
-}
 
 void observer(t_data *data)
 {
     int i;
-    wait_all_threads(data);
+    while (get_ready_threads(data) < data->nthreads);
     while (1)
     {
         i = 0;
@@ -49,9 +44,9 @@ void *routine(void *arg)
 
     philo = (t_philo *)arg;
     data = philo->data;
-    wait_all_threads(data);
+    while (get_ready_threads(data) < data->nthreads);
     if (philo->id % 2)
-        precise_usleep(NULL, 60);
+        precise_usleep(NULL, 20);
     while (1)
     {
         ate = ft_eat(data, philo);

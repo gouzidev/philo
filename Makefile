@@ -4,18 +4,15 @@ SRC = philo.c init.c ph.c utils.c utils1.c safe.c safe1.c
 
 OBJ = $(SRC:.c=.o)
 
-CFLAGS = -Wall -Werror -Wextra -g3 -fsanitize=thread
-
-# THREADFLAG = -fsanitize=thread
+CFLAGS = -Wall -Werror -Wextra -pthread
 
 all: $(NAME) clean
 
-
 $(NAME): $(OBJ)
-	gcc $(CFLAGS) $(THREADFLAG) $^ -o $@
+	gcc $(CFLAGS) $^ -o $@
 
 %o: %c
-	gcc $(CFLAGS) $(THREADFLAG) $< -o $@
+	gcc $(CFLAGS) $< -o $@
 
 re: fclean all clean
 	clear
