@@ -5,25 +5,27 @@ int will_die(t_philo *philo)
     long time_to_die;
 
     time_to_die = philo->data->time_to_die;
-    return (get_curr_time() - get_last_ate(philo) > time_to_die);
+    return (millisecons_passed() - get_last_ate(philo) > time_to_die);
 }
 
 void observer(t_data *data)
 {
     int i;
-    while (get_ready_threads_count(data) != data->nthreads);
-    while (!get_done(data))
+    precise_usleep(data, 1);
+    while (1)
     {
         i = 0;
         while (i < data->nthreads)
         {
             if (will_die(&data->philos[i]))
             {
-                set_done(data, 1);
+                LOCK(&data->done_mutex);
                 LOCK(&data->printf_mutex);
                 printf("%ld %d died\n", get_timestamp(data), data->philos[i].id + 1);
-                UNLOCK(&data->printf_mutex);
-                break;
+                data->done = 1;
+                LOCK(&data->printf_mutex);
+                UNLOCK(&data->done_mutex);
+                return ;
             }
             i++;
         }
@@ -32,7 +34,6 @@ void observer(t_data *data)
 
 void *routine(void *arg)
 {
-    // increment ready_threads_count
     int ate;
     int slept;
     t_philo *philo;
@@ -40,8 +41,10 @@ void *routine(void *arg)
 
     philo = (t_philo *)arg;
     data = philo->data;
-    while (get_ready_threads_count(data) != data->nthreads);
-    while (!get_done(data))
+    set_last_ate(philo, millisecons_passed());
+    if (philo->id % 2)
+        precise_usleep(NULL, 60);
+    while (1)
     {
         ate = ft_eat(data, philo);
         if (!ate)
@@ -54,8 +57,9 @@ void *routine(void *arg)
         if (get_done(data))
             return NULL;
         ft_think(data, philo->id);
+            if (get_done(data))
+                return NULL;
     }
-    
     return NULL;
 }
 
@@ -67,8 +71,7 @@ int main(int ac, char *av[])
     init_data(data);
     init_mutexes(data);
     set_done(data, 0);
-    set_ready_threads_count(data, 0);
-    set_started(data, 0);
+    data->init_time = millisecons_passed();
     create_threads(data, routine);
     observer(data);
     join_threads(data);

@@ -36,9 +36,3 @@ void safe_print(t_data *data, int id, char *msg)
     printf(msg, curr_timestamp, id);
     UNLOCK(&data->printf_mutex);
 }
-
-void safe_usleep(t_data *data, long n)
-{
-	if (get_done(data)) return;
-	usleep(n);
-}

@@ -21,12 +21,7 @@ typedef struct s_data
     int nthreads;
     long done;
     pthread_mutex_t done_mutex;
-    long started;
-    pthread_mutex_t started_mutex;
     pthread_mutex_t printf_mutex;
-    pthread_mutex_t time_mutex;
-    int ready_threads_count;
-    pthread_mutex_t ready_threads_count_mutex;
     long time_to_die;
     long time_to_eat;
     long time_to_sleep;
@@ -39,19 +34,14 @@ typedef struct s_data
 typedef struct s_philo
 {
     int id;
-    long init_time;
     long time_eat;
     long time_sleep;
     long time_think;
     long time_die;
     long last_ate;
-    int gonna_die;
-    long used_forks;
 
     long eat_count;
     pthread_mutex_t     last_ate_mutex;
-    pthread_mutex_t     used_forks_mutex;
-    pthread_mutex_t     eat_count_mutex;
     pthread_t thread;
     pthread_mutex_t     *right_hand;
     pthread_mutex_t     *left_hand;
@@ -62,7 +52,6 @@ typedef struct s_philo
 long    get_done(t_data *data);
 long    get_started(t_data *data);
 long    get_time(t_data *data);
-long    get_ready_threads_count(t_data *data);
 long    get_eat_count(t_philo *philo);
 long    get_last_ate(t_philo *philo);
 long    get_used_fork(t_philo *philo);
@@ -70,7 +59,6 @@ long    get_used_fork(t_philo *philo);
 void    set_done(t_data *data, long new_done);
 void    set_started(t_data *data, long new_started);
 void    set_time(t_data *data, long new_time);
-void    set_ready_threads_count(t_data *data, long new_ready_threads_count);
 void    set_eat_count(t_philo *philo, long new_eat_count);
 void    set_last_ate(t_philo *philo, long new_last_ate);
 void set_used_forks(t_philo *philo, long new_used_forks);
@@ -87,7 +75,7 @@ void init_data (t_data *data);
 void dest_mutexes(t_data *data);
 void LOCK(pthread_mutex_t *thread);
 void UNLOCK(pthread_mutex_t *thread);
-long get_curr_time();
+long millisecons_passed();
 long get_timestamp(t_data *data);
 int gonna_die(t_data *data, int ph_id);
 
@@ -112,7 +100,7 @@ void safe_print(t_data *data, int id, char *msg);
 int is_odd(int n);
 void LOCK(pthread_mutex_t *thread);
 void UNLOCK(pthread_mutex_t *thread);
-long get_curr_time();
+long millisecons_passed();
 long get_timestamp(t_data *data);
 void safe_usleep(t_data *data, long n);
 void precise_usleep(t_data *data, long n);
