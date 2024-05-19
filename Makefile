@@ -9,7 +9,6 @@ CFLAGS = -Wall -Werror -Wextra -g3 -fsanitize=thread
 # THREADFLAG = -fsanitize=thread
 
 all: $(NAME) clean
-	clear
 
 
 $(NAME): $(OBJ)

@@ -30,7 +30,6 @@ void observer(t_data *data)
             if (will_die(&data->philos[i]))
             {
                 safe_print(data, data->philos[i].id + 1, "%ld %d died\n");
-                // printf("%ld %d died\n", get_timestamp(data), data->philos[i].id + 1);
                 LOCK(&data->done_mutex);
                 data->done = 1;
                 UNLOCK(&data->done_mutex);
@@ -39,7 +38,6 @@ void observer(t_data *data)
             i++;
         }
     }
-        printf("done %ld\n", get_done(data));
 }
 
 void *routine(void *arg)
@@ -85,6 +83,5 @@ int main(int ac, char *av[])
     create_threads(data, routine);
     observer(data);
     join_threads(data);
-    printf("done\n");
     dest_mutexes(data);
 }
