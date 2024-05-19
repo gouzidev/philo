@@ -74,9 +74,12 @@ void create_threads(t_data *data, void *(*routine)(void *))
     int i;
 
     i = 0;
+    set_ready_threads(data, 0);
     while (i < data->nthreads)
     {
+    set_last_ate(&data->philos[i], millisecons_passed());
         pthread_create(&data->philos[i].thread, NULL, routine, &data->philos[i]);
+        set_ready_threads(data, get_ready_threads(data) + 1);
         i++;
     }
 }
@@ -89,6 +92,9 @@ void join_threads(t_data *data)
     while (i < data->nthreads)
     {
         pthread_join(data->philos[i].thread, NULL);
+        LOCK(&data->printf_mutex);
+        printf("joined %d\n", i);
+        UNLOCK(&data->printf_mutex);
         i++;
     }
 }

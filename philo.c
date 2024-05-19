@@ -2,17 +2,26 @@
 
 int will_die(t_philo *philo)
 {
+    int should_die;
+    long time_since_ate;
     long time_to_die;
 
     time_to_die = philo->data->time_to_die;
-    return (millisecons_passed() - get_last_ate(philo) > time_to_die);
+    time_since_ate = (millisecons_passed() - get_last_ate(philo));
+    should_die = time_since_ate > time_to_die;
+    return (should_die);
 }
 
-void wa
+void wait_all_threads(t_data *data)
+{
+    while (get_ready_threads(data) < data->nthreads)
+        ;
+}
 
 void observer(t_data *data)
 {
     int i;
+    wait_all_threads(data);
     while (1)
     {
         i = 0;
@@ -20,11 +29,10 @@ void observer(t_data *data)
         {
             if (will_die(&data->philos[i]))
             {
+                safe_print(data, data->philos[i].id + 1, "%ld %d died\n");
+                // printf("%ld %d died\n", get_timestamp(data), data->philos[i].id + 1);
                 LOCK(&data->done_mutex);
-                LOCK(&data->printf_mutex);
-                printf("%ld %d died\n", get_timestamp(data), data->philos[i].id + 1);
                 data->done = 1;
-                UNLOCK(&data->printf_mutex);
                 UNLOCK(&data->done_mutex);
                 return ;
             }
@@ -43,7 +51,7 @@ void *routine(void *arg)
 
     philo = (t_philo *)arg;
     data = philo->data;
-    set_last_ate(philo, millisecons_passed());
+    wait_all_threads(data);
     if (philo->id % 2)
         precise_usleep(NULL, 60);
     while (1)
@@ -59,8 +67,8 @@ void *routine(void *arg)
         if (get_done(data))
             return NULL;
         ft_think(data, philo->id);
-            if (get_done(data))
-                return NULL;
+        if (get_done(data))
+            return NULL;
     }
     return NULL;
 }
@@ -77,5 +85,6 @@ int main(int ac, char *av[])
     create_threads(data, routine);
     observer(data);
     join_threads(data);
+    printf("done\n");
     dest_mutexes(data);
 }

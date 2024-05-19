@@ -2,11 +2,30 @@
 
 long    get_done(t_data *data)
 {
-    long done;
     LOCK(&data->done_mutex);
-    done = data->done;
+    if (data->done)
+    {
+        UNLOCK(&data->done_mutex);
+        return (1);
+    }
     UNLOCK(&data->done_mutex);
-    return (done);
+    return (0);
+}
+long get_ready_threads(t_data *data)
+{
+    long ready_threads;
+    LOCK(&data->ready_threads_mutex);
+    ready_threads = data->ready_threads;
+    UNLOCK(&data->ready_threads_mutex);
+    return (ready_threads);
+}
+
+long    set_ready_threads(t_data *data, long new_ready_threads)
+{
+    LOCK(&data->ready_threads_mutex);
+    data->ready_threads = new_ready_threads;
+    UNLOCK(&data->ready_threads_mutex);
+    return (new_ready_threads);
 }
 
 long    get_last_ate(t_philo *philo)

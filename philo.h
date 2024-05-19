@@ -22,6 +22,8 @@ typedef struct s_data
     long done;
     pthread_mutex_t done_mutex;
     pthread_mutex_t printf_mutex;
+    pthread_mutex_t ready_threads_mutex;
+    long ready_threads;
     long time_to_die;
     long time_to_eat;
     long time_to_sleep;
@@ -54,14 +56,14 @@ long    get_started(t_data *data);
 long    get_time(t_data *data);
 long    get_eat_count(t_philo *philo);
 long    get_last_ate(t_philo *philo);
-long    get_used_fork(t_philo *philo);
+long get_ready_threads(t_data *data);
 
 void    set_done(t_data *data, long new_done);
 void    set_started(t_data *data, long new_started);
 void    set_time(t_data *data, long new_time);
 void    set_eat_count(t_philo *philo, long new_eat_count);
 void    set_last_ate(t_philo *philo, long new_last_ate);
-void set_used_forks(t_philo *philo, long new_used_forks);
+long    set_ready_threads(t_data *data, long new_ready_threads);
 
 int	ft_atoi(const char *str);
 int is_odd(int n);

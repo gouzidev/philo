@@ -65,8 +65,6 @@ void init_data (t_data *data)
     {
         data->philos[i].data = data;
         data->philos[i].id = i;
-        data->philos[i].right_hand = NULL;
-        data->philos[i].left_hand = NULL;
     }
     assign_forks(data);
 }
@@ -76,9 +74,11 @@ void create_threads(t_data *data, void *(*routine)(void *))
     int i;
 
     i = 0;
+    set_ready_threads(data, 0);
     while (i < data->nthreads)
     {
         pthread_create(&data->philos[i].thread, NULL, routine, &data->philos[i]);
+        set_ready_threads(data, get_ready_threads(data) + 1);
         i++;
     }
 }
@@ -157,7 +157,7 @@ int ft_eat(t_data *data, t_philo *philo)
         return (0);
     }
     LOCK(&data->printf_mutex);
-    printf("%ld %d has taken a right fork\n", get_timestamp(data), philo->id + 1);
+    printf("%ld %d has taken a fork\n", get_timestamp(data), philo->id + 1);
     UNLOCK(&data->printf_mutex);
     LOCK(philo->left_hand);
     if (get_done(data))
@@ -167,7 +167,7 @@ int ft_eat(t_data *data, t_philo *philo)
         return (0);
     }
     LOCK(&data->printf_mutex);
-    printf("%ld %d has taken a left  fork\n", get_timestamp(data), philo->id + 1);
+    printf("%ld %d has taken a fork\n", get_timestamp(data), philo->id + 1);
     printf("%ld %d is eating\n", get_timestamp(data), philo->id + 1);
     UNLOCK(&data->printf_mutex);
     set_last_ate(philo, millisecons_passed());
@@ -194,27 +194,27 @@ int ft_sleep(t_data *data, int id)
 
 int will_die(t_philo *philo)
 {
+    int should_die;
+    long time_since_ate;
     long time_to_die;
 
     time_to_die = philo->data->time_to_die;
-    return (millisecons_passed() - get_last_ate(philo) > time_to_die);
+    time_since_ate = (millisecons_passed() - get_last_ate(philo));
+    should_die = time_since_ate > time_to_die;
+    printf("%ld %d died ?\n",    time_since_ate, philo->id + 1);
+    return (should_die);
 }
-void release_forks(t_philo *philo)
+
+void wait_all_threads(t_data *data)
 {
-    if (philo->left_hand != NULL)
-    {
-        UNLOCK(philo->left_hand);
-    }
-    if (philo->right_hand != NULL)
-    {
-        UNLOCK(philo->right_hand);
-    }
+    while (get_ready_threads(data) < data->nthreads)
+        ;
 }
 
 void observer(t_data *data)
 {
     int i;
-    precise_usleep(data, 1);
+    wait_all_threads(data);
     while (1)
     {
         i = 0;
@@ -222,7 +222,6 @@ void observer(t_data *data)
         {
             if (will_die(&data->philos[i]))
             {
-                release_forks(&data->philos[i]);
                 LOCK(&data->done_mutex);
                 LOCK(&data->printf_mutex);
                 printf("%ld %d died\n", get_timestamp(data), data->philos[i].id + 1);
@@ -246,6 +245,7 @@ void *routine(void *arg)
 
     philo = (t_philo *)arg;
     data = philo->data;
+    wait_all_threads(data);
     set_last_ate(philo, millisecons_passed());
     if (philo->id % 2)
         precise_usleep(NULL, 60);
@@ -305,6 +305,22 @@ long    get_done(t_data *data)
     done = data->done;
     UNLOCK(&data->done_mutex);
     return (done);
+}
+long get_ready_threads(t_data *data)
+{
+    long ready_threads;
+    LOCK(&data->ready_threads_mutex);
+    ready_threads = data->ready_threads;
+    UNLOCK(&data->ready_threads_mutex);
+    return (ready_threads);
+}
+
+long    set_ready_threads(t_data *data, long new_ready_threads)
+{
+    LOCK(&data->ready_threads_mutex);
+    data->ready_threads = new_ready_threads;
+    UNLOCK(&data->ready_threads_mutex);
+    return (new_ready_threads);
 }
 
 long    get_last_ate(t_philo *philo)
