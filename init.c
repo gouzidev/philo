@@ -65,6 +65,8 @@ void init_data (t_data *data)
     {
         data->philos[i].data = data;
         data->philos[i].id = i;
+        data->philos[i].right_hand = NULL;
+        data->philos[i].left_hand = NULL;
     }
     assign_forks(data);
 }
@@ -89,7 +91,6 @@ void join_threads(t_data *data)
     while (i < data->nthreads)
     {
         pthread_join(data->philos[i].thread, NULL);
-        printf("pass %d\n", i + 1);
         i++;
     }
 }
