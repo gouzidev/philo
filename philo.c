@@ -7,22 +7,12 @@ int will_die(t_philo *philo)
     time_to_die = philo->data->time_to_die;
     return (millisecons_passed() - get_last_ate(philo) > time_to_die);
 }
-void release_forks(t_philo *philo)
-{
-    if (philo->left_hand != NULL)
-    {
-        UNLOCK(philo->left_hand);
-    }
-    if (philo->right_hand != NULL)
-    {
-        UNLOCK(philo->right_hand);
-    }
-}
+
+void wa
 
 void observer(t_data *data)
 {
     int i;
-    precise_usleep(data, 1);
     while (1)
     {
         i = 0;
@@ -30,7 +20,6 @@ void observer(t_data *data)
         {
             if (will_die(&data->philos[i]))
             {
-                release_forks(&data->philos[i]);
                 LOCK(&data->done_mutex);
                 LOCK(&data->printf_mutex);
                 printf("%ld %d died\n", get_timestamp(data), data->philos[i].id + 1);
