@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:16:45 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/20 01:50:33 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/20 03:05:40 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,9 @@ int	ft_eat(t_data *data, t_philo *philo)
 	if (get_done(data))
 		return (unlock(philo->right_hand), unlock(philo->left_hand), 0);
 	set_last_ate(philo, millisecons_passed());
-	set_eat_count(philo, get_eat_count(philo) + 1);
+	lock(&philo->eat_count_mutex);
+	philo->eat_count++;
+	unlock(&philo->eat_count_mutex);
 	safe_print(data, philo->id + 1, "%ld %d is eating\n");
 	precise_usleep(data->time_to_eat);
 	if (get_done(data))
@@ -57,17 +59,13 @@ int	ft_sleep(t_data *data, int id)
 
 int	ft_think(t_data *data, int id)
 {
-	long	curr_timestamp;
-
 	if (get_done(data))
 		return (0);
-	curr_timestamp = get_timestamp(data);
+	precise_usleep(1);
 	if (get_done(data))
 		return (0);
+	safe_print(data, id + 1, "%ld %d is thinking\n");
 	if (get_done(data))
 		return (0);
-	lock(&data->printf_mutex);
-	printf("%ld %d is thinking\n", curr_timestamp, id + 1);
-	unlock(&data->printf_mutex);
 	return (1);
 }

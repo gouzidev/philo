@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:16:53 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/20 01:33:41 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/20 02:58:25 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	safe_print(t_data *data, int id, char *msg)
 {
 	long	curr_timestamp;
 
-	if (get_done(data))
+	if (get_done(data) || data->nthreads == get_eat_count(&data->philos[id - 1])) 	
 		return ;
 	lock(&data->printf_mutex);
 	curr_timestamp = get_timestamp(data);

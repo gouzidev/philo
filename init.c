@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:16:42 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/20 01:50:27 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/20 02:22:43 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void	dest_mutexes(t_data *data)
 t_data	*parse(int ac, char *av[])
 {
 	t_data	*data;
+	int	i;
 
 	if (ac != 5 && ac != 6)
 		(printf("bad number of args\n"), exit(1));
@@ -63,14 +64,7 @@ t_data	*parse(int ac, char *av[])
 		data->n_eat_times = ft_atoi(av[5]);
 	else
 		data->n_eat_times = -1;
-	return (data);
-}
-
-void	init_data(t_data *data)
-{
-	int	i;
-
-	data->philos = malloc(sizeof(t_philo) * data->nthreads);
+    data->philos = malloc(sizeof(t_philo) * data->nthreads);
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->nthreads);
 	i = -1;
 	while (++i < data->nthreads)
@@ -79,6 +73,23 @@ void	init_data(t_data *data)
 		data->philos[i].id = i;
 	}
 	assign_forks(data);
+	return (data);
+}
+
+int	verify(t_data *data, int ac)
+{
+    if (data->nthreads > 200 || data->nthreads < 1)
+        return 0;
+    if (data->n_eat_times < 1 && ac == 6)
+        return 0;
+    if (data->time_to_die < 60)
+        return 0;
+    if (data->time_to_eat < 60)
+        return 0;
+    if (data->time_to_sleep < 60)
+        return 0;
+    return 1;
+    
 }
 
 void	assign_forks(t_data *data)

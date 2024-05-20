@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:15:55 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/20 02:04:44 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/20 03:00:52 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ void	join_threads(t_data *data)
 
 int philo_full(t_philo *philo)
 {
+	if (philo->data->n_eat_times == -1)
+		return 0;
 	if (get_eat_count(philo) == philo->data->n_eat_times)
 		return 1;
 	return 0;
@@ -51,15 +53,19 @@ int philo_full(t_philo *philo)
 void	observer(t_data *data)
 {
 	int	i;
+	int	full_philos;
 
 	while (get_ready_threads(data) < data->nthreads)
 		;
 	while (1)
 	{
 		i = 0;
+		full_philos = 0;
 		while (i < data->nthreads)
 		{
 			if (philo_full(&data->philos[i]))
+				full_philos++;
+			if (full_philos == data->nthreads)
 			{
 				set_done(data, 1);
 				return ;
@@ -106,9 +112,12 @@ void	*routine(void *arg)
 int	main(int ac, char *av[])
 {
 	t_data	*data;
+	int	good;
 
 	data = parse(ac, av);
-	init_data(data);
+	good = verify(data, ac);
+	if (!good)
+		return (free(data->forks), free(data->philos), free(data), 1);
 	init_mutexes(data);
 	set_done(data, 0);
 	data->init_time = millisecons_passed();
@@ -119,4 +128,5 @@ int	main(int ac, char *av[])
 	free(data->forks);
 	free(data->philos);
 	free(data);
+	return (0);
 }

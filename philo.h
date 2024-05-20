@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:30:16 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/20 01:49:29 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/20 02:23:01 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void					create_threads(t_data *data, void *(*routine)(void *));
 void					join_threads(t_data *data);
 void					assign_forks(t_data *data);
 t_data					*parse(int ac, char *av[]);
-void					init_data(t_data *data);
+int						verify(t_data *data, int ac);
 void					dest_mutexes(t_data *data);
 void					lock(pthread_mutex_t *thread);
 void					unlock(pthread_mutex_t *thread);
