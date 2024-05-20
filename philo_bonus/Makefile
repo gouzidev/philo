@@ -15,7 +15,7 @@ $(NAME): $(OBJ)
 	gcc $(CFLAGS) $^ -o $@
 
 %o: %c
-	gcc $(CFLAGS) -g3 -fsanitize=thread $< -o $@
+	gcc $(CFLAGS) $< -o $@
 
 re: fclean all clean
 	clear

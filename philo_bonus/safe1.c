@@ -12,35 +12,22 @@
 
 #include "philo.h"
 
-long	get_done(t_data *data)
+long	get_alive(t_philo *philo)
 {
-	lock(&data->done_mutex);
-	if (data->done)
-	{
-		unlock(&data->done_mutex);
-		return (1);
-	}
-	unlock(&data->done_mutex);
-	return (0);
-}
-
-long	get_ready_threads(t_data *data)
-{
-	long	ready_threads;
-
-	lock(&data->ready_threads_mutex);
-	ready_threads = data->ready_threads;
-	unlock(&data->ready_threads_mutex);
-	return (ready_threads);
+	long alive;
+	sem_wait(philo->alive_sem);
+	alive = philo->alive;
+	sem_post(philo->alive_sem);
+	return alive;
 }
 
 long	get_last_ate(t_philo *philo)
 {
 	long	last_ate;
 
-	lock(&philo->last_ate_mutex);
+	sem_wait(philo->last_ate_sem);
 	last_ate = philo->last_ate;
-	unlock(&philo->last_ate_mutex);
+	sem_post(philo->last_ate_sem);
 	return (last_ate);
 }
 
@@ -48,8 +35,8 @@ long	get_eat_count(t_philo *philo)
 {
 	long	eat_count;
 
-	lock(&philo->eat_count_mutex);
+	sem_wait(philo->eat_count_sem);
 	eat_count = philo->eat_count;
-	unlock(&philo->eat_count_mutex);
+	sem_post(philo->eat_count_sem);
 	return (eat_count);
 }

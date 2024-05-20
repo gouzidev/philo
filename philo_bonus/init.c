@@ -12,42 +12,6 @@
 
 #include "philo.h"
 
-void	init_mutexes(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	while (i < data->nthreads)
-	{
-		pthread_mutex_init(&data->forks[i], NULL);
-		pthread_mutex_init(&data->philos[i].last_ate_mutex, NULL);
-		pthread_mutex_init(&data->philos[i].eat_count_mutex, NULL);
-        
-		i++;
-	}
-	pthread_mutex_init(&data->printf_mutex, NULL);
-	pthread_mutex_init(&data->ready_threads_mutex, NULL);
-	pthread_mutex_init(&data->done_mutex, NULL);
-	set_done(data, 0);
-}
-
-void	dest_mutexes(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	while (i < data->nthreads)
-	{
-		pthread_mutex_destroy(&data->forks[i]);
-		pthread_mutex_destroy(&data->philos[i].last_ate_mutex);
-		pthread_mutex_destroy(&data->philos[i].eat_count_mutex);
-		i++;
-	}
-	pthread_mutex_destroy(&data->printf_mutex);
-	pthread_mutex_destroy(&data->ready_threads_mutex);
-	pthread_mutex_destroy(&data->done_mutex);
-}
-
 t_data	*parse(int ac, char *av[])
 {
 	t_data	*data;
@@ -65,7 +29,6 @@ t_data	*parse(int ac, char *av[])
 	else
 		data->n_eat_times = -1;
     data->philos = malloc(sizeof(t_philo) * data->nthreads);
-	data->forks = malloc(sizeof(pthread_mutex_t) * data->nthreads);
 	data->pids = malloc(sizeof(pid_t) * data->nthreads);
 	i = -1;
 	while (++i < data->nthreads)
@@ -73,7 +36,6 @@ t_data	*parse(int ac, char *av[])
 		data->philos[i].data = data;
 		data->philos[i].id = i;
 	}
-	assign_forks(data);
 	return (data);
 }
 
@@ -91,24 +53,4 @@ int	verify(t_data *data, int ac)
         return 0;
     return 1;
     
-}
-
-void	assign_forks(t_data *data)
-{
-	int	i;
-	int	nphilos;
-
-	nphilos = data->nthreads;
-	i = -1;
-	if (nphilos == 1)
-	{
-		data->philos[0].right_hand = &data->forks[0];
-		data->philos[0].left_hand = NULL;
-		return ;
-	}
-	while (++i < data->nthreads)
-	{
-		data->philos[i].right_hand = &data->forks[i];
-		data->philos[i].left_hand = &data->forks[(i + 1) % nphilos];
-	}
 }

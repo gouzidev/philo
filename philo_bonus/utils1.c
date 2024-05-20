@@ -12,16 +12,6 @@
 
 #include "philo.h"
 
-void	lock(pthread_mutex_t *thread)
-{
-	pthread_mutex_lock(thread);
-}
-
-void	unlock(pthread_mutex_t *thread)
-{
-	pthread_mutex_unlock(thread);
-}
-
 long	millisecons_passed(void)
 {
 	struct timeval	now;
@@ -39,7 +29,6 @@ long	get_timestamp(t_data *data)
 
 int freee(t_data *data)
 {
-	free(data->forks);
 	free(data->philos);
 	free(data->pids);
 	free(data);

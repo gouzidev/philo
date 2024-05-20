@@ -41,12 +41,10 @@ void	safe_print(t_data *data, int id, char *msg)
 {
 	long	curr_timestamp;
 
-	if (get_done(data) || data->nthreads == get_eat_count(&data->philos[id - 1])) 	
-		return ;
-	lock(&data->printf_mutex);
 	curr_timestamp = get_timestamp(data);
+	sem_wait(data->print_sem);
 	printf(msg, curr_timestamp, id);
-	unlock(&data->printf_mutex);
+	sem_post(data->print_sem);
 }
 
 int	will_die(t_philo *philo)
