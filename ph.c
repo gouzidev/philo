@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:16:45 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/20 03:22:00 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/20 03:25:48 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	ft_eat(t_data *data, t_philo *philo)
 		return (0);
 	lock(philo->right_hand);
 	safe_print(data, philo->id + 1, "%ld %d has taken a fork\n");
-	if (get_done(data))
+	if (get_done(data) || data->nthreads == 1)
 		return (unlock(philo->right_hand), 0);
 	lock(philo->left_hand);
 	safe_print(data, philo->id + 1, "%ld %d has taken a fork\n");
