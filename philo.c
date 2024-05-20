@@ -1,82 +1,122 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/20 01:15:55 by sgouzi            #+#    #+#             */
+/*   Updated: 2024/05/20 02:04:44 by sgouzi           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-int will_die(t_philo *philo)
+void	create_threads(t_data *data, void *(*routine)(void *))
 {
-    int should_die;
-    long time_since_ate;
-    long time_to_die;
+	int	i;
 
-    time_to_die = philo->data->time_to_die;
-    time_since_ate = (millisecons_passed() - get_last_ate(philo));
-    should_die = time_since_ate > time_to_die;
-    return (should_die);
+	i = 0;
+	set_ready_threads(data, 0);
+	while (i < data->nthreads)
+	{
+		set_last_ate(&data->philos[i], millisecons_passed());
+		set_eat_count(&data->philos[i], 0);
+		pthread_create(&data->philos[i].thread, NULL, routine,
+			&data->philos[i]);
+		set_ready_threads(data, get_ready_threads(data) + 1);
+		i++;
+	}
 }
 
-
-void observer(t_data *data)
+void	join_threads(t_data *data)
 {
-    int i;
-    while (get_ready_threads(data) < data->nthreads);
-    while (1)
-    {
-        i = 0;
-        while (i < data->nthreads)
-        {
-            if (will_die(&data->philos[i]))
-            {
-                safe_print(data, data->philos[i].id + 1, "%ld %d died\n");
-                LOCK(&data->done_mutex);
-                data->done = 1;
-                UNLOCK(&data->done_mutex);
-                return ;
-            }
-            i++;
-        }
-    }
+	int	i;
+
+	i = 0;
+	while (i < data->nthreads)
+	{
+		pthread_join(data->philos[i].thread, NULL);
+		i++;
+	}
 }
 
-void *routine(void *arg)
+int philo_full(t_philo *philo)
 {
-    int ate;
-    int slept;
-    t_philo *philo;
-    t_data *data;
-
-    philo = (t_philo *)arg;
-    data = philo->data;
-    while (get_ready_threads(data) < data->nthreads);
-    if (philo->id % 2)
-        precise_usleep(NULL, 20);
-    while (1)
-    {
-        ate = ft_eat(data, philo);
-        if (!ate)
-            return NULL;
-        if (get_done(data))
-            return NULL;
-        slept = ft_sleep(data, philo->id);
-        if (!slept)
-            return NULL;
-        if (get_done(data))
-            return NULL;
-        ft_think(data, philo->id);
-        if (get_done(data))
-            return NULL;
-    }
-    return NULL;
+	if (get_eat_count(philo) == philo->data->n_eat_times)
+		return 1;
+	return 0;
 }
 
-int main(int ac, char *av[])
+void	observer(t_data *data)
 {
-    t_data *data;
+	int	i;
 
-    data = parse(ac, av);
-    init_data(data);
-    init_mutexes(data);
-    set_done(data, 0);
-    data->init_time = millisecons_passed();
-    create_threads(data, routine);
-    observer(data);
-    join_threads(data);
-    dest_mutexes(data);
+	while (get_ready_threads(data) < data->nthreads)
+		;
+	while (1)
+	{
+		i = 0;
+		while (i < data->nthreads)
+		{
+			if (philo_full(&data->philos[i]))
+			{
+				set_done(data, 1);
+				return ;
+			}
+			if (will_die(&data->philos[i]))
+			{
+				safe_print(data, data->philos[i].id + 1, "%ld %d died\n");
+				set_done(data, 1);
+				return ;
+			}
+			i++;
+		}
+	}
+}
+
+void	*routine(void *arg)
+{
+	int		ate;
+	int		slept;
+	t_philo	*philo;
+	t_data	*data;
+
+	philo = (t_philo *)arg;
+	data = philo->data;
+	while (get_ready_threads(data) < data->nthreads)
+		;
+	if (philo->id % 2)
+		precise_usleep(20);
+	while (1)
+	{
+		ate = ft_eat(data, philo);
+		if (!ate)
+			return (NULL);
+		slept = ft_sleep(data, philo->id);
+		if (!slept)
+			return (NULL);
+		ft_think(data, philo->id);
+		if (get_done(data))
+			return (NULL);
+	}
+	return (NULL);
+}
+
+int	main(int ac, char *av[])
+{
+	t_data	*data;
+
+	data = parse(ac, av);
+	init_data(data);
+	init_mutexes(data);
+	set_done(data, 0);
+	data->init_time = millisecons_passed();
+	create_threads(data, routine);
+	observer(data);
+	join_threads(data);
+	dest_mutexes(data);
+	free(data->forks);
+	free(data->philos);
+	free(data);
 }

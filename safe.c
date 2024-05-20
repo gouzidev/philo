@@ -1,53 +1,42 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   safe.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/20 01:16:51 by sgouzi            #+#    #+#             */
+/*   Updated: 2024/05/20 01:50:07 by sgouzi           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-long    get_done(t_data *data)
+long	set_ready_threads(t_data *data, long new_ready_threads)
 {
-    LOCK(&data->done_mutex);
-    if (data->done)
-    {
-        UNLOCK(&data->done_mutex);
-        return (1);
-    }
-    UNLOCK(&data->done_mutex);
-    return (0);
+	lock(&data->ready_threads_mutex);
+	data->ready_threads = new_ready_threads;
+	unlock(&data->ready_threads_mutex);
+	return (new_ready_threads);
 }
 
-long get_ready_threads(t_data *data)
+void	set_done(t_data *data, long new_done)
 {
-    long ready_threads;
-    LOCK(&data->ready_threads_mutex);
-    ready_threads = data->ready_threads;
-    UNLOCK(&data->ready_threads_mutex);
-    return (ready_threads);
+	lock(&data->done_mutex);
+	data->done = new_done;
+	unlock(&data->done_mutex);
 }
 
-long    set_ready_threads(t_data *data, long new_ready_threads)
+void	set_last_ate(t_philo *philo, long new_last_ate)
 {
-    LOCK(&data->ready_threads_mutex);
-    data->ready_threads = new_ready_threads;
-    UNLOCK(&data->ready_threads_mutex);
-    return (new_ready_threads);
+	lock(&philo->last_ate_mutex);
+	philo->last_ate = new_last_ate;
+	unlock(&philo->last_ate_mutex);
 }
 
-long    get_last_ate(t_philo *philo)
+void set_eat_count(t_philo *philo, long new_eat_count)
 {
-    long last_ate;
-    LOCK(&philo->last_ate_mutex);
-    last_ate = philo->last_ate;
-    UNLOCK(&philo->last_ate_mutex);
-    return (last_ate);
-}
-
-void set_done(t_data *data, long new_done)
-{
-    LOCK(&data->done_mutex);
-    data->done = new_done;
-    UNLOCK(&data->done_mutex);
-}
-
-void set_last_ate(t_philo *philo, long new_last_ate)
-{
-    LOCK(&philo->last_ate_mutex);
-    philo->last_ate = new_last_ate;
-    UNLOCK(&philo->last_ate_mutex);
+    lock(&philo->eat_count_mutex);
+    philo->eat_count = new_eat_count;
+    unlock(&philo->eat_count_mutex);
 }
