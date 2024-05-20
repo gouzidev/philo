@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:15:55 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/20 03:00:52 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/20 03:20:12 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,10 @@ int philo_full(t_philo *philo)
 	if (philo->data->n_eat_times == -1)
 		return 0;
 	if (get_eat_count(philo) == philo->data->n_eat_times)
-		return 1;
+		{
+			return 1;
+			
+		}
 	return 0;
 }
 
@@ -63,12 +66,14 @@ void	observer(t_data *data)
 		full_philos = 0;
 		while (i < data->nthreads)
 		{
-			if (philo_full(&data->philos[i]))
-				full_philos++;
-			if (full_philos == data->nthreads)
+			if (get_eat_count(&data->philos[i]) == data->n_eat_times)
 			{
-				set_done(data, 1);
-				return ;
+				full_philos++;
+				if (full_philos == data->nthreads)
+				{
+					set_done(data, 1);
+					return ;
+				}
 			}
 			if (will_die(&data->philos[i]))
 			{

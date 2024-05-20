@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:30:16 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/20 02:23:01 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/20 03:12:47 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ int						will_die(t_philo *philo);
 int						ft_think(t_data *data, int id);
 int						ft_eat(t_data *data, t_philo *philo);
 int						ft_sleep(t_data *data, int id);
-
+int						is_full(t_philo *philo);
 /* utils.c */
 int						ft_atoi(const char *str);
 void					safe_print(t_data *data, int id, char *msg);
