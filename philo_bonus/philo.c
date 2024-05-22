@@ -66,10 +66,7 @@ int ft_eat(t_data *data, t_philo *philo)
 	sem_post(data->forks_sem);
 	sem_post(data->forks_sem);
 	if (data->n_eat_times == get_eat_count(philo))
-	{
-		printf("flul -> %d\n", philo->id);
 		exit(0);
-	}
 	return (1);
 }
 
