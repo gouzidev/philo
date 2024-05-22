@@ -54,7 +54,7 @@ t_data	*parse(int ac, char *av[])
 	int	i;
 
 	if (ac != 5 && ac != 6)
-		(printf("bad number of args\n"), exit(1));
+		return (printf("bad number of args\n"), NULL);
 	data = malloc(sizeof(t_data));
     data->nthreads = ft_atoi(av[1]);
     data->time_to_die = ft_atoi(av[2]);

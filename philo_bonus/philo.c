@@ -12,126 +12,118 @@
 
 #include "philo.h"
 
-void waiter(t_data *data)
+
+void kill_all(t_data *data)
 {
-	int	status;
-	pid_t	dead_child;
 	int	i;
 
 	i = 0;
-	while(i < data->nthreads)
+	while (i < data->nthreads)
 	{
-		dead_child = waitpid(-1, &status, 0);
+		kill(data->pids[i], SIGKILL);
 		i++;
 	}
+	sem_post(data->print_sem);
 }
 
 void	*observer(void *arg)
 {
 	t_data *data;
 	t_philo *philo;
+	int	i;
 
 	philo = (t_philo *)arg;
 	data = philo->data;
+
 	while (1)
 	{
-		if (get_eat_count(philo) == data->n_eat_times)
+		i = 0;
+		while (i < data->nthreads)
 		{
-			set_alive(philo, 1);
-			return NULL;
-		}
-		if (will_die(philo))
-		{
-			safe_print(data, philo->id + 1, "%ld %d died\n");
-			set_alive(philo, 1);
-			return NULL;
+			philo = &data->philos[i];
+			if (get_last_ate(philo) != 0 && will_die(philo))
+			{
+				sem_wait(data->start_sem);
+				printf("%ld %d died\n", get_timestamp(data), philo->id);
+				set_running(data, 0);
+				exit(1);
+			}
+			i++;
 		}
 	}
 	return NULL;
 }
 
-void ft_eat(t_data *data, t_philo *philo)
+int ft_eat(t_data *data, t_philo *philo)
 {
-	if (!get_alive(philo))
-		return;
-
+	if (!get_running(data))
+		return (0);
 	sem_wait(data->forks_sem);
-	safe_print(data, philo->id, "%ld %d has taken a fork\n");
-	if (!get_alive(philo))
-	{
-		sem_post(data->forks_sem);
-		return ;
-	}
+	safe_print(data, philo->id, "%ld %d has taken a left  fork\n");
+	if (!get_running(data))
+		return (sem_post(data->forks_sem), 0) ;
 	sem_wait(data->forks_sem);
-	safe_print(data, philo->id, "%ld %d has taken a fork\n");
-	if (!get_alive(philo))
-	{
-		sem_post(data->forks_sem);
-		sem_post(data->forks_sem);
-		return ;
-	}
+	safe_print(data, philo->id, "%ld %d has taken a right fork\n");
+	if (!get_running(data))
+		return (sem_post(data->forks_sem), sem_post(data->forks_sem), 0);
 	safe_print(data, philo->id, "%ld %d is eating\n");
-	// set_last_ate(philo, millisecons_passed());
-	// set_eat_count(philo, get_eat_count(philo) + 1);
-	if (!get_alive(philo))
-	{
-		sem_post(data->forks_sem);
-		sem_post(data->forks_sem);
-		return ;
-	}
+	set_last_ate(philo, millisecons_passed());
+	set_eat_count(philo, get_eat_count(philo) + 1);
 	precise_usleep(data->time_to_eat);
 	sem_post(data->forks_sem);
 	sem_post(data->forks_sem);
-
+	
+	return (1);
 }
 
-void ft_sleep(t_data *data, t_philo *philo)
+int ft_sleep(t_data *data, t_philo *philo)
 {
-	if (!get_alive(philo))
-		return ;
+	if (!get_running(data))
+		return (0) ;
 	safe_print(data, philo->id, "%ld %d is sleeping\n");
-	if (!get_alive(philo))
-		return ;
+	if (!get_running(data))
+		return (0) ;
 	precise_usleep(data->time_to_sleep);
+	return (1);
 }
 
-void ft_think(t_data *data, t_philo *philo)
+int ft_think(t_data *data, t_philo *philo)
 {
-	if (!get_alive(philo))
-		return ;
+	if (!get_running(data))
+		return (0);
 	safe_print(data, philo->id, "%ld %d is thinking\n");
-	if (!get_alive(philo))
-		return ;
-	precise_usleep(data->time_to_sleep);
+	if (!get_running(data))
+		return (0);
+	precise_usleep(1);
+	return (1);
 }
 
 void process(t_philo *philo) // routine
 {
-	pthread_t thread;
 	t_data *data;
-	printf("-> %d\n", philo->id);
 
 	data = philo->data;
-	philo->alive_sem = sem_open("/alive", O_CREAT, 0644, 1);
-	data->print_sem = sem_open("/print", O_CREAT, 0644, 1);
-	data->forks_sem = sem_open("/philos", O_CREAT, 0644, data->nthreads);
-	set_alive(philo, 1);
 
+	if (philo->id % 2 == 0)
+	 	precise_usleep(1);
+	pthread_t thread;
 	pthread_create(&thread, NULL, observer, philo);
-	while(get_alive(philo))
+	
+	set_last_ate(philo, millisecons_passed());
+	while(1)
 	{
-		ft_eat(data, philo);
-		// ft_sleep(data, philo);
-		// ft_think(data, philo);
-		sem_wait(data->print_sem);
-		printf("hey\n");
-		sem_post(data->print_sem);
-		precise_usleep(6000);
+		int good;
+		good = ft_eat(data, philo);
+		if (!good)
+			break;
+		good = ft_sleep(data, philo);
+		if (!good)
+			break;
+		good = ft_think(data, philo);
+		if (!good)
+			break;
 	}
 	pthread_join(thread, NULL);
-	sem_close(philo->alive_sem);
-	sem_close(data->print_sem);
-	sem_close(data->forks_sem);
 }
 
 int	main(int ac, char *av[])
@@ -144,20 +136,25 @@ int	main(int ac, char *av[])
 
 	data = parse(ac, av);
 	good = verify(data, ac);
+	init_semaphores(data);
+	i = 0;
+
 	if (!good)
 		return (free(data->philos), free(data), 1);
 	i = 0;
+	data->init_time = millisecons_passed();
+	set_running(data, 1);
 	while (i < data->nthreads)
 	{
 		id = fork();
+		data->pids[i] = id;
 		if (id == 0)
 			process(&data->philos[i]);
 		else if (id == -1)
 			return (freee(data));
-		else
-			data->pids[i] = id;
 		i++;
 	}
 	waiter(data);
+	close_semaphores(data);
 	return freee(data);
 }

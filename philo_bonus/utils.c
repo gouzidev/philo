@@ -43,7 +43,7 @@ void	safe_print(t_data *data, int id, char *msg)
 
 	curr_timestamp = get_timestamp(data);
 	sem_wait(data->print_sem);
-	printf(msg, curr_timestamp, id);
+	printf(msg, curr_timestamp, id + 1);
 	sem_post(data->print_sem);
 }
 
@@ -57,4 +57,39 @@ int	will_die(t_philo *philo)
 	time_since_ate = (millisecons_passed() - get_last_ate(philo));
 	should_die = time_since_ate > time_to_die;
 	return (should_die);
+}
+
+void waiter(t_data *data)
+{
+	int	status;
+	int	i;
+
+	i = 0;
+	while(i < data->nthreads)
+	{
+		waitpid(-1, &status, 0);
+		if (status >> 8 == 0)
+			return ;
+		else
+			kill_all(data);
+		i++;
+	}
+}
+
+void init_semaphores(t_data *data)
+{
+	sem_unlink("/print");
+	data->print_sem = sem_open("/print", O_CREAT | O_EXCL, 0644, 1);
+	sem_unlink("/forks");
+	data->forks_sem = sem_open("/forks", O_CREAT | O_EXCL, 0644, data->nthreads);
+	sem_unlink("/start");
+	data->start_sem = sem_open("/start", O_CREAT | O_EXCL, 0644, 0);
+}
+
+void close_semaphores(t_data *data)
+{
+	(void) data;
+	sem_unlink("/print");
+	sem_unlink("/forks");
+	sem_unlink("/start");
 }

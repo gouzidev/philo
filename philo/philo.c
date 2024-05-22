@@ -120,6 +120,8 @@ int	main(int ac, char *av[])
 	int	good;
 
 	data = parse(ac, av);
+	if (!data)
+		return (0);
 	good = verify(data, ac);
 	if (!good)
 		return (free(data->forks), free(data->philos), free(data), 1);

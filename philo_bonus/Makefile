@@ -1,21 +1,21 @@
-NAME = philo
+NAME = philo_bonus
 
-SRC = philo.c init.c ph.c utils.c utils1.c safe.c safe1.c 
+SRC = philo.c init.c ph.c utils.c utils1.c safe.c safe1.c str.c
 
 OBJ = $(SRC:.c=.o)
 
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra -pthread 
 
-# THREADFLAG = -fsanitize=thread
+ THREADFLAG = -fsanitize=thread
 
 all: $(NAME) clean
 
 
 $(NAME): $(OBJ)
-	gcc $(CFLAGS) $^ -o $@
+	gcc $(THREADFLAG) $(CFLAGS) $^ -o $@
 
-%o: %c
-	gcc $(CFLAGS) $< -o $@
+%.o: %.c
+	gcc $(THREADFLAG) $(CFLAGS) -c $< -o $@
 
 re: fclean all clean
 	clear
