@@ -30,25 +30,18 @@ void	*observer(void *arg)
 {
 	t_data *data;
 	t_philo *philo;
-	int	i;
 
 	philo = (t_philo *)arg;
 	data = philo->data;
 
 	while (1)
 	{
-		i = 0;
-		while (i < data->nthreads)
+		if (get_last_ate(philo) != 0 && will_die(philo))
 		{
-			philo = &data->philos[i];
-			if (get_last_ate(philo) != 0 && will_die(philo))
-			{
-				sem_wait(data->print_sem);
-				printf("%ld %d died\n", get_timestamp(data), philo->id);
-				freee(data);
-				exit(1);
-			}
-			i++;
+			sem_wait(data->print_sem);
+			printf("%ld %d died\n", get_timestamp(data), philo->id);
+			freee(data);
+			exit(1);
 		}
 	}
 	return NULL;
@@ -72,7 +65,11 @@ int ft_eat(t_data *data, t_philo *philo)
 	precise_usleep(data->time_to_eat);
 	sem_post(data->forks_sem);
 	sem_post(data->forks_sem);
-	
+	if (data->n_eat_times == get_eat_count(philo))
+	{
+		printf("flul -> %d\n", philo->id);
+		exit(0);
+	}
 	return (1);
 }
 
@@ -101,19 +98,18 @@ int ft_think(t_data *data, t_philo *philo)
 void process(t_philo *philo) // routine
 {
 	t_data *data;
+	int good;
+	pthread_t thread;
 
 	data = philo->data;
-
 	if (philo->id % 2 == 0)
 	 	precise_usleep(1);
-	pthread_t thread;
 	set_last_ate(philo, millisecons_passed());
 	set_eat_count(philo, 0);
 	set_running(data, 1);
 	pthread_create(&thread, NULL, observer, philo);
 	while(1)
 	{
-		int good;
 		good = ft_eat(data, philo);
 		if (!good)
 			break;
@@ -130,22 +126,19 @@ void process(t_philo *philo) // routine
 int	main(int ac, char *av[])
 {
 	t_data	*data;
-
 	int	good;
 	int i;
 	int id;
 
 	data = parse(ac, av);
 	good = verify(data, ac);
-	i = 0;
-
 	if (!good)
-		return (free(data->philos), free(data->pids), free(data), 1);
+		return (printf("bad args\n"), free(data->philos), free(data), 1);
 	init_semaphores(data);
-	i = 0;
 	data->init_time = millisecons_passed();
 	set_running(data, 1);
-	while (i < data->nthreads)
+	i = -1;
+	while (++i < data->nthreads)
 	{
 		id = fork();
 		data->pids[i] = id;
@@ -153,7 +146,6 @@ int	main(int ac, char *av[])
 			process(&data->philos[i]);
 		else if (id == -1)
 			return (freee(data));
-		i++;
 	}
 	waiter(data);
 	close_semaphores(data);

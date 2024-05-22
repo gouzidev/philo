@@ -21,7 +21,6 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <semaphore.h>
-#include <wait.h>
 #include <sys/wait.h>
 #include <signal.h>
 
@@ -72,7 +71,7 @@ void					set_last_ate(t_philo *philo, long new_last_ate);
 long					get_running(t_data *data);
 void					set_running(t_data *data, long new_running);
 
-int						ft_atoi(const char *str, char p);
+int						ft_atoi(const char *str);
 t_data					*parse(int ac, char *av[]);
 int						verify(t_data *data, int ac);
 long					millisecons_passed(void);

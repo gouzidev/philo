@@ -34,3 +34,38 @@ int freee(t_data *data)
 	free(data);
 	return (0);
 }
+
+int	ft_atoi(const char *str)
+{
+	int		i;
+	int		sign;
+	long	res;
+
+	res = 0;
+	sign = 1;
+	i = 0;
+	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
+		i++;
+	if (str[i] == '-')
+		return -1;
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		res = res * 10 + (str[i] - 48);
+		if (res > 2147483647)
+			return (-1);
+		i++;
+	}
+	if (str[i] != '\0')
+		return -1;
+	return (res * sign);
+}
+
+void	safe_print(t_data *data, int id, char *msg)
+{
+	long	curr_timestamp;
+
+	curr_timestamp = get_timestamp(data);
+	sem_wait(data->print_sem);
+	printf(msg, curr_timestamp, id + 1);
+	sem_post(data->print_sem);
+}
