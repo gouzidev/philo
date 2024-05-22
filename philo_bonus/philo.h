@@ -58,9 +58,6 @@ typedef struct s_philo
 	long				last_ate;
 	sem_t				*last_ate_sem;
 	char				*last_ate_name;
-	long				alive;
-	sem_t				*alive_sem;
-	char				*alive_name;
 	long				eat_count;
 	sem_t				*eat_count_sem;
 	char				*eat_count_name;
@@ -68,11 +65,9 @@ typedef struct s_philo
 }						t_philo;
 
 /* safe.c */
-long					get_alive(t_philo *philo);
 long					get_eat_count(t_philo *philo);
 long					get_last_ate(t_philo *philo);
 
-void					set_alive(t_philo *philo, long new_alive);
 void					set_eat_count(t_philo *philo, long new_eat_count);
 void					set_last_ate(t_philo *philo, long new_last_ate);
 long					get_running(t_data *data);
@@ -103,17 +98,9 @@ void	*observer(void *arg);
 
 
 
-
-/* str.c */
-int	len(char const *s1);
-char	*ft_strjoin(char const *s1, char const *s2);
-int	count_digits(int n);
-char	*ft_itoa(int n);
-char	*join_str_num(char	*str,	int	num);
-
+/* init.c */
 
 void init_semaphores(t_data *data);
 void close_semaphores(t_data *data);
-void init_last_ate(t_data *data);
 void waiter(t_data *data);
 #endif

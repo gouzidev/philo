@@ -12,15 +12,6 @@
 
 #include "philo.h"
 
-long	get_alive(t_philo *philo)
-{
-	long alive;
-	sem_wait(philo->data->print_sem);
-	alive = philo->alive;
-	sem_post(philo->data->print_sem);
-	return alive;
-}
-
 long	get_running(t_data *data)
 {
 	long running;

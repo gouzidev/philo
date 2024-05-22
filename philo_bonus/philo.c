@@ -107,8 +107,8 @@ void process(t_philo *philo) // routine
 	if (philo->id % 2 == 0)
 	 	precise_usleep(1);
 	pthread_t thread;
-	pthread_create(&thread, NULL, observer, philo);
 	set_last_ate(philo, millisecons_passed());
+	pthread_create(&thread, NULL, observer, philo);
 	while(1)
 	{
 		int good;

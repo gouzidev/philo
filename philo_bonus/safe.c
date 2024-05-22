@@ -12,13 +12,6 @@
 
 #include "philo.h"
 
-void	set_alive(t_philo *philo, long new_alive)
-{
-	sem_wait(philo->data->print_sem);
-	philo->alive = new_alive;
-	sem_post(philo->data->print_sem);
-}
-
 void	set_last_ate(t_philo *philo, long new_last_ate)
 {
 	sem_wait(philo->data->print_sem);
