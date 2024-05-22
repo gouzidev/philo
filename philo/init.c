@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:16:42 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/20 02:22:43 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/22 20:36:17 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,12 @@ t_data	*parse(int ac, char *av[])
 	if (ac != 5 && ac != 6)
 		return (printf("bad number of args\n"), NULL);
 	data = malloc(sizeof(t_data));
-    data->nthreads = ft_atoi(av[1]);
-    data->time_to_die = ft_atoi(av[2]);
-    data->time_to_eat = ft_atoi(av[3]);
-    data->time_to_sleep = ft_atoi(av[4]);
+    data->nthreads = ft_atoi(av[1], 'p');
+    data->time_to_die = ft_atoi(av[2], 't');
+    data->time_to_eat = ft_atoi(av[3], 't');
+    data->time_to_sleep = ft_atoi(av[4], 't');
 	if (ac == 6)
-		data->n_eat_times = ft_atoi(av[5]);
+		data->n_eat_times = ft_atoi(av[5], 't');
 	else
 		data->n_eat_times = -1;
     data->philos = malloc(sizeof(t_philo) * data->nthreads);

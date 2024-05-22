@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:30:16 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/20 03:12:47 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/22 20:36:36 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,9 @@ void					set_eat_count(t_philo *philo, long new_eat_count);
 void					set_last_ate(t_philo *philo, long new_last_ate);
 long					set_ready_threads(t_data *data, long new_ready_threads);
 
-int						ft_atoi(const char *str);
+int						ft_atoi(const char *str, char p);
 int						is_odd(int n);
+
 // void print(char *msg,t_data *data, int id);
 void					init_mutexes(t_data *data);
 void					create_threads(t_data *data, void *(*routine)(void *));
@@ -93,7 +94,6 @@ int						ft_eat(t_data *data, t_philo *philo);
 int						ft_sleep(t_data *data, int id);
 int						is_full(t_philo *philo);
 /* utils.c */
-int						ft_atoi(const char *str);
 void					safe_print(t_data *data, int id, char *msg);
 
 /* utils1.c */

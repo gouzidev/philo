@@ -6,13 +6,13 @@
 /*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:16:53 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/20 02:58:25 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/22 20:34:40 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	ft_atoi(const char *str)
+int	ft_atoi(const char *str, char p)
 {
 	int	i;
 	int	sign;
@@ -21,19 +21,19 @@ int	ft_atoi(const char *str)
 	res = 0;
 	sign = 1;
 	i = 0;
-	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			sign = -1;
-		i++;
-	}
+	if (str[i] == '-')
+		return -1;
 	while (str[i] >= '0' && str[i] <= '9')
 	{
 		res = res * 10 + (str[i] - 48);
+		if (res > 200 && p == 'p')
+			return -1;
 		i++;
 	}
+	if (res < 60 && p == 't')
+		return -1;
+	if (str[i] != '\0')
+		return -1;
 	return (res * sign);
 }
 

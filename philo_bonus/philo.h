@@ -37,7 +37,6 @@ typedef struct s_data
 	sem_t				*print_sem;
 	sem_t				*forks_sem;
 	sem_t				*running_sem;
-	sem_t				*start_sem;
 	long				running;
 	long				time_to_die;
 	long				time_to_eat;
@@ -73,7 +72,7 @@ void					set_last_ate(t_philo *philo, long new_last_ate);
 long					get_running(t_data *data);
 void					set_running(t_data *data, long new_running);
 
-int						ft_atoi(const char *str);
+int						ft_atoi(const char *str, char p);
 t_data					*parse(int ac, char *av[]);
 int						verify(t_data *data, int ac);
 long					millisecons_passed(void);
@@ -84,7 +83,6 @@ int						ft_think(t_data *data, t_philo *philo);
 int						ft_eat(t_data *data, t_philo *philo);
 int						ft_sleep(t_data *data, t_philo *philo);
 /* utils.c */
-int						ft_atoi(const char *str);
 void					safe_print(t_data *data, int id, char *msg);
 
 /* utils1.c */

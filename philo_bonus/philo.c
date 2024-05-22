@@ -108,6 +108,8 @@ void process(t_philo *philo) // routine
 	 	precise_usleep(1);
 	pthread_t thread;
 	set_last_ate(philo, millisecons_passed());
+	set_eat_count(philo, 0);
+	set_running(data, 1);
 	pthread_create(&thread, NULL, observer, philo);
 	while(1)
 	{
