@@ -1,0 +1,169 @@
+➜  philo_bonus git:(main) ✗ valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./philo_bonus  3 179 60 60   
+==2663789== Memcheck, a memory error detector
+==2663789== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==2663789== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==2663789== Command: ./philo_bonus 3 179 60 60
+==2663789== 
+58 3 has taken a left  fork
+58 1 has taken a left  fork
+58 2 has taken a left  fork
+==2663791== Thread 2:
+==2663791== Conditional jump or move depends on uninitialised value(s)
+==2663791==    at 0x109409: observer (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663791==    by 0x4904AC2: start_thread (pthread_create.c:442)
+==2663791==    by 0x4995A03: clone (clone.S:100)
+==2663791==  Uninitialised value was created by a heap allocation
+==2663791==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663791==    by 0x109A2A: parse (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663791==    by 0x1097FB: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663791== 
+==2663792== Thread 2:
+==2663792== Conditional jump or move depends on uninitialised value(s)
+==2663792==    at 0x109409: observer (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790== Thread 2:
+==2663790== Conditional jump or move depends on uninitialised value(s)
+==2663792==    by 0x4904AC2: start_thread (pthread_create.c:442)
+==2663792==    by 0x4995A03: clone (clone.S:100)
+==2663792==  Uninitialised value was created by a heap allocation
+==2663790==    at 0x109409: observer (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790==    by 0x4904AC2: start_thread (pthread_create.c:442)
+==2663792==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663792==    by 0x109A2A: parse (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663792==    by 0x1097FB: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663792== 
+==2663790==    by 0x4995A03: clone (clone.S:100)
+==2663790==  Uninitialised value was created by a heap allocation
+==2663790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663790==    by 0x109A2A: parse (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790==    by 0x1097FB: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790== 
+237 0 died
+==2663790== 
+==2663790== HEAP SUMMARY:
+==2663790==     in use at exit: 461 bytes in 7 blocks
+==2663790==   total heap usage: 11 allocs, 4 frees, 1,961 bytes allocated
+==2663790== 
+==2663790== Thread 1:
+==2663790== 24 bytes in 1 blocks are still reachable in loss record 1 of 7
+==2663790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663790==    by 0x498FF34: tsearch (tsearch.c:337)
+==2663790==    by 0x490C7A1: __sem_check_add_mapping (sem_routines.c:121)
+==2663790==    by 0x490C43B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==2663790==    by 0x109E00: init_semaphores (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790==    by 0x109861: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790== 
+==2663790== 24 bytes in 1 blocks are still reachable in loss record 2 of 7
+==2663790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663790==    by 0x498FF9E: tsearch (tsearch.c:337)
+==2663790==    by 0x490C7A1: __sem_check_add_mapping (sem_routines.c:121)
+==2663790==    by 0x490C43B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==2663790==    by 0x109E38: init_semaphores (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790==    by 0x109861: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790== 
+==2663790== 24 bytes in 1 blocks are still reachable in loss record 3 of 7
+==2663790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663790==    by 0x498FF9E: tsearch (tsearch.c:337)
+==2663790==    by 0x490C7A1: __sem_check_add_mapping (sem_routines.c:121)
+==2663790==    by 0x490C43B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==2663790==    by 0x109E6C: init_semaphores (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790==    by 0x109861: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790== 
+==2663790== 39 bytes in 1 blocks are still reachable in loss record 4 of 7
+==2663790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663790==    by 0x490C728: __sem_check_add_mapping (sem_routines.c:104)
+==2663790==    by 0x490C43B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==2663790==    by 0x109E00: init_semaphores (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790==    by 0x109861: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790== 
+==2663790== 39 bytes in 1 blocks are still reachable in loss record 5 of 7
+==2663790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663790==    by 0x490C728: __sem_check_add_mapping (sem_routines.c:104)
+==2663790==    by 0x490C43B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==2663790==    by 0x109E38: init_semaphores (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790==    by 0x109861: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790== 
+==2663790== 39 bytes in 1 blocks are still reachable in loss record 6 of 7
+==2663790==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663790==    by 0x490C728: __sem_check_add_mapping (sem_routines.c:104)
+==2663790==    by 0x490C43B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==2663790==    by 0x109E6C: init_semaphores (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790==    by 0x109861: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790== 
+==2663790== 272 bytes in 1 blocks are possibly lost in loss record 7 of 7
+==2663790==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663790==    by 0x40147D9: calloc (rtld-malloc.h:44)
+==2663790==    by 0x40147D9: allocate_dtv (dl-tls.c:375)
+==2663790==    by 0x40147D9: _dl_allocate_tls (dl-tls.c:634)
+==2663790==    by 0x49057B4: allocate_stack (allocatestack.c:430)
+==2663790==    by 0x49057B4: pthread_create@@GLIBC_2.34 (pthread_create.c:647)
+==2663790==    by 0x10973B: process (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790==    by 0x1098D5: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663790== 
+==2663790== LEAK SUMMARY:
+==2663790==    definitely lost: 0 bytes in 0 blocks
+==2663790==    indirectly lost: 0 bytes in 0 blocks
+==2663790==      possibly lost: 272 bytes in 1 blocks
+==2663790==    still reachable: 189 bytes in 6 blocks
+==2663790==         suppressed: 0 bytes in 0 blocks
+==2663790== 
+==2663790== For lists of detected and suppressed errors, rerun with: -s
+==2663790== ERROR SUMMARY: 47585 errors from 2 contexts (suppressed: 0 from 0)
+==2663789== 
+==2663789== HEAP SUMMARY:
+==2663789==     in use at exit: 189 bytes in 6 blocks
+==2663789==   total heap usage: 9 allocs, 3 frees, 665 bytes allocated
+==2663789== 
+==2663789== 24 bytes in 1 blocks are still reachable in loss record 1 of 6
+==2663789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663789==    by 0x498FF34: tsearch (tsearch.c:337)
+==2663789==    by 0x490C7A1: __sem_check_add_mapping (sem_routines.c:121)
+==2663789==    by 0x490C43B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==2663789==    by 0x109E00: init_semaphores (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663789==    by 0x109861: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663789== 
+==2663789== 24 bytes in 1 blocks are still reachable in loss record 2 of 6
+==2663789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663789==    by 0x498FF9E: tsearch (tsearch.c:337)
+==2663789==    by 0x490C7A1: __sem_check_add_mapping (sem_routines.c:121)
+==2663789==    by 0x490C43B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==2663789==    by 0x109E38: init_semaphores (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663789==    by 0x109861: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663789== 
+==2663789== 24 bytes in 1 blocks are still reachable in loss record 3 of 6
+==2663789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663789==    by 0x498FF9E: tsearch (tsearch.c:337)
+==2663789==    by 0x490C7A1: __sem_check_add_mapping (sem_routines.c:121)
+==2663789==    by 0x490C43B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==2663789==    by 0x109E6C: init_semaphores (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663789==    by 0x109861: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663789== 
+==2663789== 39 bytes in 1 blocks are still reachable in loss record 4 of 6
+==2663789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663789==    by 0x490C728: __sem_check_add_mapping (sem_routines.c:104)
+==2663789==    by 0x490C43B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==2663789==    by 0x109E00: init_semaphores (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663789==    by 0x109861: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663789== 
+==2663789== 39 bytes in 1 blocks are still reachable in loss record 5 of 6
+==2663789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663789==    by 0x490C728: __sem_check_add_mapping (sem_routines.c:104)
+==2663789==    by 0x490C43B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==2663789==    by 0x109E38: init_semaphores (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663789==    by 0x109861: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663789== 
+==2663789== 39 bytes in 1 blocks are still reachable in loss record 6 of 6
+==2663789==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2663789==    by 0x490C728: __sem_check_add_mapping (sem_routines.c:104)
+==2663789==    by 0x490C43B: sem_open@@GLIBC_2.34 (sem_open.c:192)
+==2663789==    by 0x109E6C: init_semaphores (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663789==    by 0x109861: main (in /nfs/homes/sgouzi/Desktop/philo/philo_bonus/philo_bonus)
+==2663789== 
+==2663789== LEAK SUMMARY:
+==2663789==    definitely lost: 0 bytes in 0 blocks
+==2663789==    indirectly lost: 0 bytes in 0 blocks
+==2663789==      possibly lost: 0 bytes in 0 blocks
+==2663789==    still reachable: 189 bytes in 6 blocks
+==2663789==         suppressed: 0 bytes in 0 blocks
+==2663789== 
+==2663789== For lists of detected and suppressed errors, rerun with: -s
+==2663789== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
