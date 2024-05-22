@@ -43,9 +43,9 @@ void	*observer(void *arg)
 			philo = &data->philos[i];
 			if (get_last_ate(philo) != 0 && will_die(philo))
 			{
-				sem_wait(data->start_sem);
+				sem_wait(data->print_sem);
 				printf("%ld %d died\n", get_timestamp(data), philo->id);
-				set_running(data, 0);
+				freee(data);
 				exit(1);
 			}
 			i++;
@@ -108,7 +108,6 @@ void process(t_philo *philo) // routine
 	 	precise_usleep(1);
 	pthread_t thread;
 	pthread_create(&thread, NULL, observer, philo);
-	
 	set_last_ate(philo, millisecons_passed());
 	while(1)
 	{
@@ -136,11 +135,11 @@ int	main(int ac, char *av[])
 
 	data = parse(ac, av);
 	good = verify(data, ac);
-	init_semaphores(data);
 	i = 0;
 
 	if (!good)
-		return (free(data->philos), free(data), 1);
+		return (free(data->philos), free(data->pids), free(data), 1);
+	init_semaphores(data);
 	i = 0;
 	data->init_time = millisecons_passed();
 	set_running(data, 1);

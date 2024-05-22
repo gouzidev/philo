@@ -1,12 +1,12 @@
 NAME = philo_bonus
 
-SRC = philo.c init.c ph.c utils.c utils1.c safe.c safe1.c str.c
+SRC = philo.c init.c ph.c utils.c utils1.c safe.c safe1.c
 
 OBJ = $(SRC:.c=.o)
 
 CFLAGS = -Wall -Werror -Wextra -pthread 
 
- THREADFLAG = -fsanitize=thread
+#  THREADFLAG = -fsanitize=thread
 
 all: $(NAME) clean
 

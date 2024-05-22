@@ -68,10 +68,7 @@ void waiter(t_data *data)
 	while(i < data->nthreads)
 	{
 		waitpid(-1, &status, 0);
-		if (status >> 8 == 0)
-			return ;
-		else
-			kill_all(data);
+		kill_all(data);
 		i++;
 	}
 }
