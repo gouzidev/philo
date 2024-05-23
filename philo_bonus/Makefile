@@ -1,6 +1,6 @@
 NAME = philo_bonus
 
-SRC = philo.c init.c utils.c safe.c safe1.c
+SRC = main_bonus.c philo_bonus.c init_bonus.c utils_bonus.c utils1_bonus.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -10,10 +10,10 @@ all: $(NAME) clean
 	clear
 
 $(NAME): $(OBJ)
-	cc $(CFLAGS) -fsanitize=thread $^ -o $@
+	cc $(CFLAGS) $^ -o $@
 
 %.o: %.c
-	cc $(CFLAGS) -fsanitize=thread -c $< -o $@
+	cc $(CFLAGS) -c $< -o $@
 
 re: fclean all clean
 	clear
