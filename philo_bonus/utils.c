@@ -19,7 +19,7 @@ int	will_die(t_philo *philo)
 	long	time_to_die;
 
 	time_to_die = philo->data->time_to_die;
-	time_since_ate = (millisecons_passed() - get_last_ate(philo));
+	time_since_ate = (millisecons_passed() - philo->last_ate);
 	should_die = time_since_ate > time_to_die;
 	return (should_die);
 }

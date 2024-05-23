@@ -6,13 +6,14 @@ OBJ = $(SRC:.c=.o)
 
 CFLAGS = -Wall -Werror -Wextra -pthread 
 
-all: $(NAME)
+all: $(NAME) clean
+	clear
 
 $(NAME): $(OBJ)
-	cc $(CFLAGS) $^ -o $@
+	cc $(CFLAGS) -fsanitize=thread $^ -o $@
 
 %.o: %.c
-	cc $(CFLAGS) -c $< -o $@
+	cc $(CFLAGS) -fsanitize=thread  -c $< -o $@
 
 re: fclean all clean
 	clear

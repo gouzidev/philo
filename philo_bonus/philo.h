@@ -55,7 +55,6 @@ typedef struct s_philo
 
 	long				last_ate;
 	sem_t				*last_ate_sem;
-	char				*last_ate_name;
 	long				eat_count;
 	sem_t				*eat_count_sem;
 	char				*eat_count_name;
@@ -92,7 +91,7 @@ void procecss(t_philo *philo);
 void kill_all(t_data *data);
 void	*observer(void *arg);
 
-
+void get_args(t_data *data, int ac, char *av[]);
 
 
 /* init.c */
