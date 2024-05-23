@@ -35,12 +35,12 @@ typedef struct s_data
 	int					nthreads;
 	sem_t				*print_sem;
 	sem_t				*forks_sem;
-	sem_t				*running_sem;
 	long				running;
 	long				time_to_die;
 	long				time_to_eat;
 	long				time_to_sleep;
 	long				init_time;
+	long				meals_eaten;
 	long				n_eat_times;
 	pid_t				*pids;
 }						t_data;
@@ -52,21 +52,15 @@ typedef struct s_philo
 	long				time_sleep;
 	long				time_think;
 	long				time_die;
-
-	long				last_ate;
+	struct timeval		last_ate;
 	sem_t				*last_ate_sem;
-	long				eat_count;
-	sem_t				*eat_count_sem;
-	char				*eat_count_name;
 	t_data				*data;
 }						t_philo;
 
 /* safe.c */
-long					get_eat_count(t_philo *philo);
-long					get_last_ate(t_philo *philo);
+struct timeval			get_last_ate(t_philo *philo);
 
-void					set_eat_count(t_philo *philo, long new_eat_count);
-void					set_last_ate(t_philo *philo, long new_last_ate);
+void					set_last_ate(t_philo *philo, struct timeval new_last_ate);
 long					get_running(t_data *data);
 void					set_running(t_data *data, long new_running);
 

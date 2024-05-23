@@ -28,22 +28,12 @@ void	set_running(t_data *data, long new_running)
 	sem_post(data->print_sem);
 }
 
-long	get_last_ate(t_philo *philo)
+struct timeval	get_last_ate(t_philo *philo)
 {
-	long	last_ate;
+	struct timeval	last_ate;
 
 	sem_wait(philo->data->print_sem);
 	last_ate = philo->last_ate;
 	sem_post(philo->data->print_sem);
 	return (last_ate);
-}
-
-long	get_eat_count(t_philo *philo)
-{
-	long	eat_count;
-
-	sem_wait(philo->data->print_sem);
-	eat_count = philo->eat_count;
-	sem_post(philo->data->print_sem);
-	return (eat_count);
 }

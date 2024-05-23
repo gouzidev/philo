@@ -12,16 +12,9 @@
 
 #include "philo.h"
 
-void	set_last_ate(t_philo *philo, long new_last_ate)
+void	set_last_ate(t_philo *philo, struct timeval new_last_ate)
 {
 	sem_wait(philo->data->print_sem);
 	philo->last_ate = new_last_ate;
 	sem_post(philo->data->print_sem);
-}
-
-void set_eat_count(t_philo *philo, long new_eat_count)
-{
-    sem_wait(philo->data->print_sem);
-    philo->eat_count = new_eat_count;
-    sem_post(philo->data->print_sem);
 }
