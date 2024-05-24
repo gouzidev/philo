@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:16:53 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/24 00:48:35 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/24 09:44:33 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ void	init_semaphores(t_data *data)
 void	close_semaphores(t_data *data)
 {
 	(void)data;
-	sem_unlink("/print");
-	sem_unlink("/forks");
 	sem_close(data->print_sem);
 	sem_close(data->forks_sem);
+	sem_unlink("/print");
+	sem_unlink("/forks");
 }
 
 long	get_running(t_data *data)

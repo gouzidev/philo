@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   safe1.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sgouzi <sgouzi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:16:54 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/20 01:50:01 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/24 09:59:31 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ long	get_last_ate(t_philo *philo)
 
 long	get_eat_count(t_philo *philo)
 {
-	long eat_count;
+	long	eat_count;
 
 	lock(&philo->eat_count_mutex);
 	eat_count = philo->eat_count;

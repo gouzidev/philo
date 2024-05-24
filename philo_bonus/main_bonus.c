@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 00:46:43 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/24 00:49:30 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/24 09:50:48 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	main(int ac, char *av[])
 	data = parse(ac, av);
 	good = verify(data, ac);
 	if (!good)
-		return (printf("bad args\n"), free(data->philos), free(data), 1);
+		return (printf("bad args\n"), freee(data), 1);
 	init_semaphores(data);
 	data->init_time = millisecons_passed();
 	data->meals_eaten = 0;
@@ -47,7 +47,7 @@ int	main(int ac, char *av[])
 		if (id == 0)
 			process(&data->philos[i]);
 		else if (id == -1)
-			return (freee(data));
+			return (freee(data), close_semaphores(data), 1);
 	}
 	waiter(data);
 	return (close_semaphores(data), freee(data));
@@ -62,9 +62,9 @@ void	waiter(t_data *data)
 	while (i < data->nthreads)
 	{
 		waitpid(-1, &status, 0);
-		if (status >> 8 == 1)
+		if (status != 0)
 		{
-			if (WIFEXITED(status) == 1)
+			if ((status >> 8) == 1)
 				break ;
 		}
 		i++;

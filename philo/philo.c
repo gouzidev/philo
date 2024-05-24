@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:15:55 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/24 00:55:58 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/24 09:59:00 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,17 +39,6 @@ void	join_threads(t_data *data)
 		pthread_join(data->philos[i].thread, NULL);
 		i++;
 	}
-}
-
-int	philo_full(t_philo *philo)
-{
-	if (philo->data->n_eat_times == -1)
-		return (0);
-	if (get_eat_count(philo) == philo->data->n_eat_times)
-	{
-		return (1);
-	}
-	return (0);
 }
 
 int	observer(t_data *data)
@@ -110,8 +99,8 @@ void	*routine(void *arg)
 
 int	main(int ac, char *av[])
 {
-	t_data *data;
-	int good;
+	t_data	*data;
+	int		good;
 
 	data = parse(ac, av);
 	good = verify(data, ac);
