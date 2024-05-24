@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ph.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sgouzi <sgouzi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:16:45 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/20 03:25:48 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/24 00:53:20 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	ft_eat(t_data *data, t_philo *philo)
 	return (unlock(philo->right_hand), unlock(philo->left_hand), 1);
 }
 
-int is_full(t_philo *philo)
+int	is_full(t_philo *philo)
 {
 	if (philo->data->n_eat_times == -1)
 		return (0);

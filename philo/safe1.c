@@ -46,7 +46,7 @@ long	get_last_ate(t_philo *philo)
 
 long	get_eat_count(t_philo *philo)
 {
-	long	eat_count;
+	long eat_count;
 
 	lock(&philo->eat_count_mutex);
 	eat_count = philo->eat_count;

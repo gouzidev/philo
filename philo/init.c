@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:16:42 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/22 20:36:17 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/23 15:52:10 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ void	init_mutexes(t_data *data)
 		pthread_mutex_init(&data->forks[i], NULL);
 		pthread_mutex_init(&data->philos[i].last_ate_mutex, NULL);
 		pthread_mutex_init(&data->philos[i].eat_count_mutex, NULL);
-        
 		i++;
 	}
 	pthread_mutex_init(&data->printf_mutex, NULL);
@@ -51,20 +50,20 @@ void	dest_mutexes(t_data *data)
 t_data	*parse(int ac, char *av[])
 {
 	t_data	*data;
-	int	i;
+	int		i;
 
 	if (ac != 5 && ac != 6)
-		return (printf("bad number of args\n"), NULL);
+		(printf("bad number of args\n"), exit(1));
 	data = malloc(sizeof(t_data));
-    data->nthreads = ft_atoi(av[1], 'p');
-    data->time_to_die = ft_atoi(av[2], 't');
-    data->time_to_eat = ft_atoi(av[3], 't');
-    data->time_to_sleep = ft_atoi(av[4], 't');
+	data->nthreads = ft_atoi(av[1]);
+	data->time_to_die = ft_atoi(av[2]);
+	data->time_to_eat = ft_atoi(av[3]);
+	data->time_to_sleep = ft_atoi(av[4]);
 	if (ac == 6)
-		data->n_eat_times = ft_atoi(av[5], 't');
+		data->n_eat_times = ft_atoi(av[5]);
 	else
 		data->n_eat_times = -1;
-    data->philos = malloc(sizeof(t_philo) * data->nthreads);
+	data->philos = malloc(sizeof(t_philo) * data->nthreads);
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->nthreads);
 	i = -1;
 	while (++i < data->nthreads)
@@ -78,18 +77,17 @@ t_data	*parse(int ac, char *av[])
 
 int	verify(t_data *data, int ac)
 {
-    if (data->nthreads > 200 || data->nthreads < 1)
-        return 0;
-    if (data->n_eat_times < 1 && ac == 6)
-        return 0;
-    if (data->time_to_die < 60)
-        return 0;
-    if (data->time_to_eat < 60)
-        return 0;
-    if (data->time_to_sleep < 60)
-        return 0;
-    return 1;
-    
+	if (data->nthreads > 200 || data->nthreads < 1)
+		return (0);
+	if (data->n_eat_times < 1 && ac == 6)
+		return (0);
+	if (data->time_to_die < 60)
+		return (0);
+	if (data->time_to_eat < 60)
+		return (0);
+	if (data->time_to_sleep < 60)
+		return (0);
+	return (1);
 }
 
 void	assign_forks(t_data *data)

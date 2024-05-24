@@ -70,7 +70,7 @@ void					set_eat_count(t_philo *philo, long new_eat_count);
 void					set_last_ate(t_philo *philo, long new_last_ate);
 long					set_ready_threads(t_data *data, long new_ready_threads);
 
-int						ft_atoi(const char *str, char p);
+int						ft_atoi(const char *str);
 int						is_odd(int n);
 
 // void print(char *msg,t_data *data, int id);

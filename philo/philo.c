@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sgouzi <sgouzi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:15:55 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/20 03:20:12 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/24 00:55:58 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,19 +41,18 @@ void	join_threads(t_data *data)
 	}
 }
 
-int philo_full(t_philo *philo)
+int	philo_full(t_philo *philo)
 {
 	if (philo->data->n_eat_times == -1)
-		return 0;
+		return (0);
 	if (get_eat_count(philo) == philo->data->n_eat_times)
-		{
-			return 1;
-			
-		}
-	return 0;
+	{
+		return (1);
+	}
+	return (0);
 }
 
-void	observer(t_data *data)
+int	observer(t_data *data)
 {
 	int	i;
 	int	full_philos;
@@ -62,26 +61,21 @@ void	observer(t_data *data)
 		;
 	while (1)
 	{
-		i = 0;
+		i = -1;
 		full_philos = 0;
-		while (i < data->nthreads)
+		while (++i < data->nthreads)
 		{
 			if (get_eat_count(&data->philos[i]) == data->n_eat_times)
 			{
 				full_philos++;
 				if (full_philos == data->nthreads)
-				{
-					set_done(data, 1);
-					return ;
-				}
+					return (set_done(data, 1), 1);
 			}
 			if (will_die(&data->philos[i]))
 			{
 				safe_print(data, data->philos[i].id + 1, "%ld %d died\n");
-				set_done(data, 1);
-				return ;
+				return (set_done(data, 1), 1);
 			}
-			i++;
 		}
 	}
 }
@@ -116,15 +110,14 @@ void	*routine(void *arg)
 
 int	main(int ac, char *av[])
 {
-	t_data	*data;
-	int	good;
+	t_data *data;
+	int good;
 
 	data = parse(ac, av);
-	if (!data)
-		return (0);
 	good = verify(data, ac);
 	if (!good)
-		return (free(data->forks), free(data->philos), free(data), 1);
+		return (printf("bad args\n"), free(data->forks), free(data->philos),
+			free(data), 1);
 	init_mutexes(data);
 	set_done(data, 0);
 	data->init_time = millisecons_passed();
