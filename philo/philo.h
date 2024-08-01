@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sgouzi <sgouzi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:30:16 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/22 20:36:36 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/24 10:20:59 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void					set_last_ate(t_philo *philo, long new_last_ate);
 long					set_ready_threads(t_data *data, long new_ready_threads);
 
 int						ft_atoi(const char *str);
-int						is_odd(int n);
+void					get_args(t_data *data, int ac, char *av[]);
 
 // void print(char *msg,t_data *data, int id);
 void					init_mutexes(t_data *data);

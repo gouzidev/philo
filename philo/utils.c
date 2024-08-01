@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:16:53 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/24 10:00:24 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/24 10:24:48 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,16 @@ int	ft_atoi(const char *str)
 	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
 		i++;
 	if (str[i] == '-')
-		return (-1);
+		return (0);
 	while (str[i] >= '0' && str[i] <= '9')
 	{
 		res = res * 10 + (str[i] - 48);
 		if (res > 2147483647)
-			return (-1);
+			return (0);
 		i++;
 	}
+	if (str[i] != '\0')
+		return (0);
 	return (res * sign);
 }
 
@@ -59,4 +61,24 @@ int	will_die(t_philo *philo)
 	time_since_ate = (millisecons_passed() - get_last_ate(philo));
 	should_die = time_since_ate > time_to_die;
 	return (should_die);
+}
+
+void	assign_forks(t_data *data)
+{
+	int	i;
+	int	nphilos;
+
+	nphilos = data->nthreads;
+	i = -1;
+	if (nphilos == 1)
+	{
+		data->philos[0].right_hand = &data->forks[0];
+		data->philos[0].left_hand = NULL;
+		return ;
+	}
+	while (++i < data->nthreads)
+	{
+		data->philos[i].right_hand = &data->forks[i];
+		data->philos[i].left_hand = &data->forks[(i + 1) % nphilos];
+	}
 }

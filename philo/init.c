@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sgouzi <sgouzi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sgouzi <sgouzi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:16:42 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/23 15:52:10 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/24 10:21:24 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,32 +47,39 @@ void	dest_mutexes(t_data *data)
 	pthread_mutex_destroy(&data->done_mutex);
 }
 
+void	get_args(t_data *data, int ac, char *av[])
+{
+	data->nthreads = ft_atoi(av[1]);
+	data->time_to_die = ft_atoi(av[2]);
+	data->time_to_eat = ft_atoi(av[3]);
+	data->time_to_sleep = ft_atoi(av[4]);
+	data->n_eat_times = -1;
+	if (ac == 6)
+		data->n_eat_times = ft_atoi(av[5]);
+}
+
 t_data	*parse(int ac, char *av[])
 {
 	t_data	*data;
 	int		i;
 
 	if (ac != 5 && ac != 6)
-		(printf("bad number of args\n"), exit(1));
+		return (printf("bad number of args\n"), NULL);
 	data = malloc(sizeof(t_data));
-	data->nthreads = ft_atoi(av[1]);
-	data->time_to_die = ft_atoi(av[2]);
-	data->time_to_eat = ft_atoi(av[3]);
-	data->time_to_sleep = ft_atoi(av[4]);
-	if (ac == 6)
-		data->n_eat_times = ft_atoi(av[5]);
-	else
-		data->n_eat_times = -1;
+	get_args(data, ac, av);
 	data->philos = malloc(sizeof(t_philo) * data->nthreads);
+	if (!data->philos)
+		return (free(data), printf("malloc error\n"), NULL);
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->nthreads);
+	if (!data->forks)
+		return (free(data->philos), free(data), printf("malloc error\n"), NULL);
 	i = -1;
 	while (++i < data->nthreads)
 	{
 		data->philos[i].data = data;
 		data->philos[i].id = i;
 	}
-	assign_forks(data);
-	return (data);
+	return (assign_forks(data), data);
 }
 
 int	verify(t_data *data, int ac)
@@ -88,24 +95,4 @@ int	verify(t_data *data, int ac)
 	if (data->time_to_sleep < 60)
 		return (0);
 	return (1);
-}
-
-void	assign_forks(t_data *data)
-{
-	int	i;
-	int	nphilos;
-
-	nphilos = data->nthreads;
-	i = -1;
-	if (nphilos == 1)
-	{
-		data->philos[0].right_hand = &data->forks[0];
-		data->philos[0].left_hand = NULL;
-		return ;
-	}
-	while (++i < data->nthreads)
-	{
-		data->philos[i].right_hand = &data->forks[i];
-		data->philos[i].left_hand = &data->forks[(i + 1) % nphilos];
-	}
 }

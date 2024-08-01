@@ -6,7 +6,7 @@
 /*   By: sgouzi <sgouzi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 01:17:01 by sgouzi            #+#    #+#             */
-/*   Updated: 2024/05/24 00:46:51 by sgouzi           ###   ########.fr       */
+/*   Updated: 2024/05/24 10:18:24 by sgouzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,16 +47,16 @@ int	ft_atoi(const char *str)
 	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
 		i++;
 	if (str[i] == '-')
-		return (-1);
+		return (0);
 	while (str[i] >= '0' && str[i] <= '9')
 	{
 		res = res * 10 + (str[i] - 48);
 		if (res > 2147483647)
-			return (-1);
+			return (0);
 		i++;
 	}
 	if (str[i] != '\0')
-		return (-1);
+		return (0);
 	return (res * sign);
 }
 

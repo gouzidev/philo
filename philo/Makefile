@@ -14,8 +14,7 @@ $(NAME): $(OBJ)
 %.o: %.c
 	cc $(CFLAGS) -pthread -c $< -o $@
 
-re: fclean all clean
-	clear
+re: fclean all
 
 clean:
 	rm -fr $(OBJ)
